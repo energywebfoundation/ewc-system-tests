@@ -1,15 +1,14 @@
 from web3.auto import w3
+from web3 import Web3
 import os
 import json
 import time
 import threading
+import sys
 from queue import Queue
 
 print_lock = threading.Lock()
 
-# link the keys that sign
-PATH_KEYS = ""
-key_files = os.listdir(PATH_KEYS)
 target_gas = 1000000
 
 # this thread is associated with a unique spamming address
@@ -68,6 +67,21 @@ def update_target(_target_gas, _average, _target):
 
 if __name__ == '__main__':
 
+    try:
+        w3.isConnected()
+    except:
+        w3 = Web3(Web3.HTTPProvider(
+            "https://ewf-testplatform.stage.slock.it/api/chains/cod-1552297354229/rpc?token=TI6ig14LDYtnijfevA5WqjwQCbbOXP9P"))
+        w3.isConnected()
+
+    try:
+        len(sys.argv) > 1
+    except Exception as error:
+        print('Provide path of key-store')
+
+    PATH_KEYS = sys.argv[1]
+    key_files = os.listdir(PATH_KEYS)
+
     # some local variables
     blockno_p = 0
     average = 0
@@ -75,7 +89,7 @@ if __name__ == '__main__':
 
     # parameters
     FACTOR = 3  # filter. I am using this: https://stackoverflow.com/questions/12636613/
-    target = 1  # number of transactions to be sent in a block
+    target = 1  # number of transactions to be sent in a block (start low)
 
     threads = []
     for t in range(1):  # 1 to be changed to len(key_files)

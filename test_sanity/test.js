@@ -5,71 +5,48 @@ var assert = require('assert');
 var http = require('http');
 var async = require('async');
 
+// parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis web3,eth,net,personal,parity,parity_set,traces,rpc,parity_accounts
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8450'));
-const VALUES = "hardcoded_values.json"
+const VALUES = "../ewf-genesis-generator/sample_chainspc/hardcoded_values.json"
 const CONTRACT = "ValidatorSetRelayed"
 var values = {};
+var contract;
 
-async function callAsync() {
-  // async stuff
+async function callAsync(contract) {
+  contract.methods.getValidators().call((error, result) => {
+  });
+  
 }
 
-async function linkContract(web3, ) {
-  return new web3.eth.Contract(res, values.address_book["RELAYED_CONTRACT"]);  
-}
-
-const tasks = [
-  function() {
-    console.log("in here")
-    return web3.eth.net.isListening()
-  },
-  function retrieveValues() {
-    // retrieves hardcoded values
+function initEverything(done) {
+  web3.eth.net.isListening()
+  .then(function() {
+    console.log("Retrieving hard-coded addresses")
     fs.readFile(VALUES, (err, jso) => {  
       if (err) throw err;
       values = JSON.parse(jso);
-      console.log(values)
-      return values
-    })
-  },
-  function retrieveABI(values) {
-    // retrieves contract ABI
-    var RelayContractABI;
-    fs.readFile('../genome-system-contracts/build/contracts/' + CONTRACT + '.json', (err, me) => {  
-        if (err) throw err;
-        RelayContractABI = JSON.parse(me);  
-        const data = {
-          abi: RelayContractABI.abi,
-          values: values
-        }
-        console.log(data)
-        return data
-    });
-  }
 
-]
+      console.log("Retrieving contract ABI")
+      fs.readFile('../genome-system-contracts/build/contracts/' + CONTRACT + '.json', (err, me) => {  
+          if (err) throw err;
+          let RelayContractABI = JSON.parse(me); 
+          
+          contract = web3.eth.Contract(RelayContractABI.abi, values.address_book["RELAYED_CONTRACT"])
+          console.log(contract)
+          done()
 
-async.waterfall(tasks, (err, results) => {
-  if (err) {
-      return next(err);
-  }
-  return res.json(results);
-})
+      });
 
-/** 
+    })     
+  })
+  .catch(e => console.log('Wow. Something went wrong.'));
+}
 
 describe('Validator Contracts', function() {
 
-  var values = {};
-  var contract;
+  before(initEverything)
 
-  before(function(values) {
-
-  })
-
-  it('should resolve', () => {
-    return callAsync();
+  it('should resolve', (contract) => {
+    return callAsync(contract);
   });
 });
-
-*/

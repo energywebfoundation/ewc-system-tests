@@ -5,7 +5,7 @@ var assert = require('assert');
 var http = require('http');
 var async = require('async');
 
-// parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis web3,eth,net,personal,parity,parity_set,traces,rpc,parity_accounts
+// parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8450'));
 const VALUES = "../ewf-genesis-generator/sample_chainspc/hardcoded_values.json"
 const CONTRACT = "ValidatorSetRelayed"
@@ -22,24 +22,35 @@ describe(' Contracts', function() {
   var relayed;
   var netOpsMultiSig;
   var communityMultiSig;
+  var holding;
   let RelayContractABI;
   let MultiSigABI;
+  let holdingABI;
 
   async function initEverything(done) {
+    // ensures that web3 is connected
     let listening = await web3.eth.net.isListening();
+
+    // retrieves the hardcoded values
     let jso = fs.readFileSync(VALUES, 'utf-8');
     values = JSON.parse(jso);
+
+    // gets the ABI of all contracts    
     let me = fs.readFileSync('../genome-system-contracts/build/contracts/' + CONTRACT + '.json', 'utf-8');
     RelayContractABI = JSON.parse(me);
+    me = fs.readFileSync('../genome-system-contracts/build/contracts/Holding.json', 'utf-8');
+    holdingABI = JSON.parse(me);
     me = fs.readFileSync('../MultiSigWallet/build/contracts/MultiSigWallet.json', 'utf-8');
     MultiSigABI = JSON.parse(me);
   }
 
   before(async function (){
     await initEverything();
+    // links the contracts
     relayed = new web3.eth.Contract(RelayContractABI.abi, values.address_book["VALIDATOR_RELAYED"]);
     netOpsMultiSig = new web3.eth.Contract(MultiSigABI.abi, values.address_book["VALIDATOR_NETOPS"]);
     communityMultiSig = new web3.eth.Contract(MultiSigABI.abi, values.address_book["COMMUNITY_FUND"]);
+    holding = new web3.eth.Contract(holdingABI.abi, values.address_book["VESTING"]);
   });
 
   describe('Validator Relayed', function() {
@@ -77,5 +88,15 @@ describe(' Contracts', function() {
     });
     
   });
+
+  describe('Amount of tokens', function() {
+
+    it('should sum to 80 M', async function() {
+      let deployedHolding = values.address_book['VESTING'];
+      let hardcodedHolding = values.balances["TARGET_AMOUNT"];
+      (await web3.eth.getBalance(deployedHolding)).should.be.equal(hardcodedHolding);
+    });
+
+  })
 
 });

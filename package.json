@@ -14,6 +14,7 @@
     "async": "^2.6.2",
     "chai": "^4.2.0",
     "ewf-genesis-generator": "git+https://github.com/energywebfoundation/ewf-genesis-generator.git",
+    "fsevents": "^2.0.1",
     "genome-system-contracts": "git+https://github.com/energywebfoundation/genome-system-contracts.git",
     "mocha": "^6.0.2",
     "multisig-wallet-gnosis": "git+https://github.com/energywebfoundation/MultiSigWallet.git",

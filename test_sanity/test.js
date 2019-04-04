@@ -7,8 +7,7 @@ var async = require('async');
 
 // parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
-const VALUES = "../ewf-genesis-generator/sample_chainspc/hardcoded_values.json"
-const CONTRACT = "ValidatorSetRelayed"
+const VALUES = "./node_modules/ewf-genesis-generator/sample_chainspec/hardcoded_values.json"
 var values = {};
 
 // functions
@@ -36,11 +35,11 @@ describe(' Contracts', function() {
     values = JSON.parse(jso);
 
     // gets the ABI of all contracts    
-    let me = fs.readFileSync('../genome-system-contracts/build/contracts/' + CONTRACT + '.json', 'utf-8');
+    let me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/ValidatorSetRelayed.json', 'utf-8');
     RelayContractABI = JSON.parse(me);
-    me = fs.readFileSync('../genome-system-contracts/build/contracts/Holding.json', 'utf-8');
+    me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/Holding.json', 'utf-8');
     holdingABI = JSON.parse(me);
-    me = fs.readFileSync('../MultiSigWallet/build/contracts/MultiSigWallet.json', 'utf-8');
+    me = fs.readFileSync('./node_modules/MultiSigWallet/build/contracts/MultiSigWallet.json', 'utf-8');
     MultiSigABI = JSON.parse(me);
   }
 

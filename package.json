@@ -6,9 +6,9 @@
   "private": true,
   "scripts": {
     "test:execute": "./node_modules/mocha/bin/mocha --exit -r chai/register-assert -r chai/register-expect -r chai/register-should test_sanity/test.js",
-    "test:compile": "cd ./node_modules/genome-system-contracts/ && npx truffle compile",
-    "test:install": "npm i genome-system-contracts && npm i ewf-genesis-generator && npm i ewf-genesis-generator",
-    "test": "npm run test:install && npm run test:compile && npm run test:execute"
+    "compile": "cd ./node_modules/genome-system-contracts/ && npx truffle compile",
+    "update": "npm i genome-system-contracts && npm i ewf-genesis-generator",
+    "test": "npm run test:execute"
   },
   "dependencies": {
     "async": "^2.6.2",
@@ -17,9 +17,6 @@
     "fsevents": "^2.0.1",
     "genome-system-contracts": "git+https://github.com/energywebfoundation/genome-system-contracts.git",
     "mocha": "^6.0.2",
-    "multisig-wallet-gnosis": "git+https://github.com/energywebfoundation/MultiSigWallet.git",
-    "node-hid": "^0.7.7",
-    "sha3": "^2.0.1",
     "web3": "^1.0.0-beta.51"
   }
 }

@@ -39,7 +39,7 @@ describe(' Contracts', function() {
     RelayContractABI = JSON.parse(me);
     me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/Holding.json', 'utf-8');
     holdingABI = JSON.parse(me);
-    me = fs.readFileSync('./node_modules/MultiSigWallet/build/contracts/MultiSigWallet.json', 'utf-8');
+    me = fs.readFileSync('./utils/MultiSigWallet.json', 'utf-8');
     MultiSigABI = JSON.parse(me);
   }
 

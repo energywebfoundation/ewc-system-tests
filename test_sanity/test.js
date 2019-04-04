@@ -7,7 +7,7 @@ var async = require('async');
 
 // parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
-const VALUES = "./node_modules/ewf-genesis-generator/sample_chainspec/hardcoded_values.json"
+const VALUES = "./node_modules/ewf-genesis-generator/sample_chainspec/chainspec_skeletons/hardcoded_values_volta.json"
 var values = {};
 
 // functions

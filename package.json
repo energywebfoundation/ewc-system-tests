@@ -5,7 +5,8 @@
   "main": "main.js",
   "private": true,
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --exit -r chai/register-assert -r chai/register-expect -r chai/register-should test_sanity/test.js"
+    "test-sanity": "./node_modules/mocha/bin/mocha --exit -r chai/register-assert -r chai/register-expect -r chai/register-should test_sanity/test.js",
+    "test-system": "./node_modules/mocha/bin/mocha --exit -r chai/register-assert -r chai/register-expect -r chai/register-should test_system/test.js"
   },
   "dependencies": {
     "async": "^2.6.2",

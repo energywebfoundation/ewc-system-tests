@@ -3,6 +3,8 @@ const DEFAULT_ADDRESS = "0x0000000000000000000000000000000000000000";
 const SYSTEM_ADDRESS = "0xffffFFFfFFffffffffffffffFfFFFfffFFFfFFfE";
 const EMPTY_BYTES32 = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
+const CHAINSPEC_VALUES = "./node_modules/ewf-genesis-generator/sample_chainspec/chainspec_skeletons/hardcoded_values_volta.json";
+
 const ValidatorState = {
     NonValidator: "0",
     FinalizedValidator: "1",
@@ -30,11 +32,29 @@ async function assertThrowsAsync(fn, msg) {
     assert.fail("Expected fn to throw");
 }
 
+function addTestWallets() {
+    fs = require("fs");
+    let accounts = JSON.parse(fs.readFileSync(__dirname + "/../accounts/testaccounts.json"));
+    accounts.map(acc => web3.eth.accounts.wallet.add(acc));
+}
+
+const Web3 = require('web3');
+const web3 = new Web3 (new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
+addTestWallets();
+
+ChainspecValues =
+    JSON.parse(
+        fs.readFileSync(__dirname + "/../node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json")
+    );
+
+
 module.exports = {
     assertThrowsAsync,
     REVERT_ERROR_MSG,
     DEFAULT_ADDRESS,
     SYSTEM_ADDRESS,
     EMPTY_BYTES32,
-    ValidatorState
+    ValidatorState,
+    web3,
+    ChainspecValues
 }

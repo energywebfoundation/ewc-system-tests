@@ -1,5 +1,5 @@
-# core-test-automation
-The swiss army knife to test functionality of Ethereum-based blockchains.
+# ewc-system-tests
+Integration and system tests of EWC.
 
 Based on web3.js, web3.py and Parity Ethereum.
 
@@ -13,9 +13,10 @@ npm install
 ```
 
 ## Guidelines
- - **Traffic generator**: the folder "utils" contains Python scripts useful for testing
- - **Sanity test**: Mocha tests (inspired by the unit tests)
+ - **Scripts**: the folder "utils" contains useful Python scripts
+ - **Sanity (integration) tests**: Mocha tests (inspired by the unit tests)
+
  ```
  npm test
  ```
- 
+- **System tests**

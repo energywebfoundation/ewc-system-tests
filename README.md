@@ -9,6 +9,7 @@ Based on web3.js, web3.py and Parity Ethereum.
 ## Installation
 ```
 npm install
+npm run compile
 
 ```
 

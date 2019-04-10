@@ -4,6 +4,7 @@ const fs = require('fs');
 var assert = require('assert');
 var http = require('http');
 var async = require('async');
+const utils = require('./utils')
 
 // parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
@@ -19,40 +20,79 @@ async function getOwner(contract) {
 describe(' Contracts', function() {
 
   var relayed;
+  var relay;
   var netOpsMultiSig;
   var communityMultiSig;
   var holding;
   let RelayContractABI;
+  let RelayedContractABI;
   let MultiSigABI;
   let holdingABI;
+
+  const RelayJSON = JSON.parse(
+      fs.readFileSync(__dirname + "/../node_modules/genome-system-contracts/build/contracts/ValidatorSetRelay.json")
+  );
 
   async function initEverything(done) {
     // ensures that web3 is connected
     let listening = await web3.eth.net.isListening();
+    web3.transactionConfirmationBlocks = 1;
+    web3.eth.transactionConfirmationBlocks = 1;
 
     // retrieves the hardcoded values
     let jso = fs.readFileSync(VALUES, 'utf-8');
     values = JSON.parse(jso);
 
-    // gets the ABI of all contracts    
+    // gets the ABI of all contracts   
     let me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/ValidatorSetRelayed.json', 'utf-8');
+    RelayedContractABI = JSON.parse(me);
+    me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/ValidatorSetRelay.json', 'utf-8');
     RelayContractABI = JSON.parse(me);
     me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/Holding.json', 'utf-8');
     holdingABI = JSON.parse(me);
     me = fs.readFileSync('./node_modules/multisig-wallet-gnosis/build/contracts/MultiSigWallet.json', 'utf-8');
     MultiSigABI = JSON.parse(me);
+    utils.addTestWallets(web3);
   }
 
   before(async function (){
+    this.timeout(60000);
     await initEverything();
     // links the contracts
-    relayed = new web3.eth.Contract(RelayContractABI.abi, values.address_book["VALIDATOR_RELAYED"]);
+    relayed = new web3.eth.Contract(RelayedContractABI.abi, values.address_book["VALIDATOR_RELAYED"]);
+    relay = new web3.eth.Contract(RelayContractABI.abi, values.address_book["VALIDATOR_RELAY"]);
     netOpsMultiSig = new web3.eth.Contract(MultiSigABI.abi, values.address_book["VALIDATOR_NETOPS"]);
     communityMultiSig = new web3.eth.Contract(MultiSigABI.abi, values.address_book["COMMUNITY_FUND"]);
+    communityMultiSig.transactionConfirmationBlocks = 1
     holding = new web3.eth.Contract(holdingABI.abi, values.address_book["VESTING"]);
+    holding.transactionConfirmationBlocks = 1
+
   });
 
   describe('Validator Relayed', function() {
+    this.timeout(120000);
+    
+    it('should set system address', async function () {
+
+      const txA = { 
+        value: '0', 
+        data: relay.methods.setSystem('0x1000000000000000000000000000000000000007').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAY"] );
+     
+      (await relay.methods.SYSTEM_ADDRESS.call()).should.be.equal('0x1000000000000000000000000000000000000007');
+
+      const txB = { 
+        value: '0', 
+        data: relay.methods.setSystem('0xffffFFFfFFffffffffffffffFfFFFfffFFFfFFfE').encodeABI()
+      };
+
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, values.address_book["VALIDATOR_RELAY"] );
+
+      (await relay.methods.SYSTEM_ADDRESS.call()).should.be.equal('0xffffFFFfFFffffffffffffffFfFFFfffFFFfFFfE');
+
+
+    });
 
     it('should be owned by NetOps', async function () {
       (await relayed.methods.owner.call()).should.be.equal(values.address_book["VALIDATOR_NETOPS"]);

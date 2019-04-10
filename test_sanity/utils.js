@@ -42,9 +42,6 @@ function addTestWallets(web3) {
 
 async function sendMultisigTransaction(web3, multisig, transaction, destination, submitterWalletPosition = 0) {
     multisig.transactionConfirmationBlocks = 1
-    multisig._transactionConfirmationBlocks = 1
-    multisig.accounts._transactionConfirmationBlocks = 1
-    multisig.options.transactionConfirmationBlocks = 1
 
     const submitter = web3.eth.accounts.wallet.accounts[submitterWalletPosition].address;
     const confirmer = submitterWalletPosition == 0 ? web3.eth.accounts.wallet.accounts['1'].address : web3.eth.accounts.wallet.accounts[submitterWalletPosition].address;

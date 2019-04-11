@@ -52,14 +52,14 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
     const submitGas = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).estimateGas({from: submitter});
     const logs = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).send({
         from: submitter, 
-        gas: Math.floor(submitGas * 1.1)
+        gas: Math.floor(submitGas * 5)
 
     });
     const transactionID = logs.events.Submission.returnValues.transactionId.toString(10);
     const confirmGas = await multisig.methods.confirmTransaction(transactionID).estimateGas({from: confirmer});
     return multisig.methods.confirmTransaction(transactionID).send({
         from: confirmer,
-        gas: Math.floor(confirmGas * 1.1)
+        gas: Math.floor(confirmGas * 5)
 
     });
 }

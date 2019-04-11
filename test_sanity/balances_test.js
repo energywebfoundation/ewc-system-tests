@@ -38,11 +38,11 @@ describe('Contracts', function() {
 
   });
 
-  describe('Balance of EWAG', function() {
+  describe('Balance of Ignitor', function() {
 
-    it('should be 8.5 M', async function() {
-      let deployed = values.address_book['EWAG'];
-      let hardcoded = values.balances['EWAG'];
+    it('should be 1 token (1000000000000000000 wei)', async function() {
+      let deployed = values.address_book['IGNITOR'];
+      let hardcoded = values.balances['IGNITOR'];
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
@@ -119,6 +119,12 @@ describe('Contracts', function() {
         let hardcoded = "1";
         (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });    
+
+    it('EWAG should be 8.5 M', async function() {
+      let deployed = values.address_book['EWAG'];
+      let hardcoded = values.balances['EWAG'];
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+    });
 
   });
 

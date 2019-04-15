@@ -12,10 +12,6 @@ const ValidatorState = {
     PendingToBeRemoved: "3"
 }
 
-const testValidators = ["0xdd520827a407b44753723ceb2614b5e0cbb1cd69", "0x18e089e83026fac89c029762a901d90b7acc0d2b", "0xca51975cccdf82bda569585f8ed12b0781a05740"];
-// validator 1-3 + community
-const testPayoutAddresses = ["0x00371459b526eA286E3e898950cE8F713B540f0B","0x00d99132c825Ecfd224832EDe811177ad1512610","0x0019E00282A6C64d0B2a37df7B9c98B298cc605A","0x000E9A1A767eA9B3A092ED49c45Eb7f8e318BD39"];
-
 
 const send = (method, params = []) => {
     return new Promise((resolve, reject) => web3.currentProvider.send({id: 0, jsonrpc: '2.0', method, params }, (e, data) => {
@@ -60,7 +56,6 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
     return multisig.methods.confirmTransaction(transactionID).send({
         from: confirmer,
         gas: Math.floor(confirmGas * 5)
-
     });
 }
 
@@ -88,6 +83,26 @@ const BlockRewardJSON = JSON.parse(
 
 const TestSCurveProvder = require("./blockreward_function");
 
+const testValidators = [
+    "0x185a57da13cd6c54b1158b1876a19a161dc7cb5e",
+    "0xacb657870cd1186d8e821d27dfd611a8e8a049d0",
+    "0xb56d4421edfe103874c244fd9e257effd56cb5b5",
+    "0x995035660ac462805c8c3ac8a0b48184a20fef74",
+    "0x9338b27a3836b79ef306db4a3ac3cc17c6b69a0b",
+    "0xe3f0a5c3345f93b3a182a18fb523161ec27db3d1",
+    "0xcd96492e1647ce2db5e87eaf7eb4b9f9ae108301",
+    "0xf896d8b88928db52cb080bffa9908bd84b12606e",
+    "0x12c7d165a7b38cbbf26f43d0025334293973425b",
+    "0x958980de5bfccba9aa112a0c8103cc83d7777ca5",
+    "0x951dc7541a6cd7b5fa7908d18ed5a9552c99b475",
+    "0xbe548ce40179b360fab6ac188e1c2f42da588c7a",
+    "0x27ce8bf591c15cb5276b95c5f333ebb8d0746372"
+];
+// validator 1-3 + community
+const testPayoutAddresses = ["0x00371459b526eA286E3e898950cE8F713B540f0B","0x00d99132c825Ecfd224832EDe811177ad1512610","0x0019E00282A6C64d0B2a37df7B9c98B298cc605A","0x000E9A1A767eA9B3A092ED49c45Eb7f8e318BD39"];
+
+const initialValidators = ChainspecValues.address_book["INITAL_VALIDATORS"];
+
 module.exports = {
     assertThrowsAsync,
     REVERT_ERROR_MSG,
@@ -102,6 +117,7 @@ module.exports = {
     RelayedJSON,
     RelayJSON,
     BlockRewardJSON,
+    initialValidators,
     testValidators,
     testPayoutAddresses,
     TestSCurveProvder

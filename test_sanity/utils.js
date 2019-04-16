@@ -53,6 +53,11 @@ async function assertThrowsAsync(fn, msg) {
 function addTestWallets(web3) {
     
     let accounts = JSON.parse(fs.readFileSync(__dirname + "/../accounts/testaccounts.json"));
+    accounts.push(
+    {
+        "privateKey": "0x989a1e104b66770d8258ba292f92c6cfea9afb348fca919a5f51033444502062",
+        "address": "0x1e490821f6ca7c66aa0a8f880ad460dda90be6bf"
+    })
     accounts.map(acc => web3.eth.accounts.wallet.add(acc.privateKey));
 }
 

@@ -16,7 +16,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "ewf-genesis-generator": "git+ssh://git@github.com/energywebfoundation/ewf-genesis-generator.git",
-    "genome-system-contracts": "git+ssh://git@github.com/energywebfoundation/genome-system-contracts.git",
+    "genome-system-contracts": "git+ssh://git@github.com/energywebfoundation/genome-system-contracts.git#v0.0.0",
     "mocha": "^6.0.2",
     "multisig-wallet-gnosis": "git+ssh://git@github.com/energywebfoundation/MultiSigWallet.git",
     "update": "^0.7.4",

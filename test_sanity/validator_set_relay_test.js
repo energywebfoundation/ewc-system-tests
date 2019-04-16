@@ -4,6 +4,7 @@ require('chai')
     .use(require('chai-as-promised'))
     .should();
 const expect = require('chai').expect;
+const utils = require('./utils')
 
 const {
     assertThrowsAsync,
@@ -21,12 +22,13 @@ const {
     BlockRewardJSON,
     initialValidators,
     testValidators,
+    address_book,
     testPayoutAddresses,
     TestSCurveProvder
 } = require(__dirname + "/utils.js");
 
 const Web3 = require('web3');
-const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
+const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 
 addTestWallets(web3);
 
@@ -70,200 +72,206 @@ describe('ValidatorSetRELAY contract', function () {
         }
     });
 
+    after(async () => {
+    
+    await web3.currentProvider.connection.close()
+    console.log('connection closed')
+    })
+
     // hope these not break the chain, otherwise big oof
-    describe("#setRelayed", async function () {
+    // describe("#setRelayed", async function () {
 
-        beforeEach(async function () {
-            (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
-        });
+    //     beforeEach(async function () {
+    //         (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
+    //     });
 
-        afterEach(async function () {
-            (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
-        });
+    //     afterEach(async function () {
+    //         (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
+    //     });
 
-        xit('should allow only the owner to set relayed address', async function () {
-            await expect(relay.methods.setRelayed(accounts[0]).send({ from: accounts[0], gas: standardGas }))
-                .to.be.rejectedWith(REVERT_ERROR_MSG);
-            await expect(relay.methods.setRelayed(accounts[1]).send({ from: accounts[1], gas: standardGas }))
-                .to.be.rejectedWith(REVERT_ERROR_MSG);
+    //     xit('should allow only the owner to set relayed address', async function () {
+    //         await expect(relay.methods.setRelayed(accounts[0]).send({ from: accounts[0], gas: standardGas }))
+    //             .to.be.rejectedWith(REVERT_ERROR_MSG);
+    //         await expect(relay.methods.setRelayed(accounts[1]).send({ from: accounts[1], gas: standardGas }))
+    //             .to.be.rejectedWith(REVERT_ERROR_MSG);
             
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setRelayed(accounts[0]).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
+    //         await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setRelayed(accounts[0]).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
 
-            (await relay.methods.relayedSet().call()).should.be.equal(accounts[0]);
+    //         (await relay.methods.relayedSet().call()).should.be.equal(accounts[0]);
 
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setRelayed(relayed.address).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-        });
+    //         await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setRelayed(relayed.address).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
+    //     });
 
-        xit('should set relayed address correctly', async function () {
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setRelayed(accounts[1]).encodeABI()
-                },
-                relay.address,
-                1
-            ).should.be.fulfilled;
+    //     xit('should set relayed address correctly', async function () {
+    //         await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setRelayed(accounts[1]).encodeABI()
+    //             },
+    //             relay.address,
+    //             1
+    //         ).should.be.fulfilled;
 
-            (await relay.methods.relayedSet().call()).should.be.equal(accounts[1]);
+    //         (await relay.methods.relayedSet().call()).should.be.equal(accounts[1]);
 
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setRelayed(relayed.address).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-        });
+    //         await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setRelayed(relayed.address).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
+    //     });
 
-        xit('should not allow to set it to the same relayed address', async function () {    
-            const logs = await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setRelayed(relayed.address).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-            should.exist(logs.events['ExecutionFailure']);
-        });
+    //     xit('should not allow to set it to the same relayed address', async function () {    
+    //         const logs = await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setRelayed(relayed.address).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
+    //         should.exist(logs.events['ExecutionFailure']);
+    //     });
 
-        xit('should emit event', async function () {
-             await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setRelayed(accounts[0]).encodeABI()
-                },
-                relay.address,
-                1
-            ).should.be.fulfilled;
+    //     xit('should emit event', async function () {
+    //          await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setRelayed(accounts[0]).encodeABI()
+    //             },
+    //             relay.address,
+    //             1
+    //         ).should.be.fulfilled;
 
-            (await relay.methods.relayedSet().call()).should.be.equal(accounts[0]);
+    //         (await relay.methods.relayedSet().call()).should.be.equal(accounts[0]);
 
-            let logs = await relay.getPastEvents('NewRelayed', {
-                fromBlock: await web3.eth.getBlockNumber(),
-                toBlock: 'latest'
-            });
-            logs[0].returnValues.old.should.be.deep.equal(relayed.address);
-            logs[0].returnValues.current.should.be.deep.equal(accounts[0]);
+    //         let logs = await relay.getPastEvents('NewRelayed', {
+    //             fromBlock: await web3.eth.getBlockNumber(),
+    //             toBlock: 'latest'
+    //         });
+    //         logs[0].returnValues.old.should.be.deep.equal(relayed.address);
+    //         logs[0].returnValues.current.should.be.deep.equal(accounts[0]);
 
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setRelayed(relayed.address).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
+    //         await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setRelayed(relayed.address).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
 
-            (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
+    //         (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
 
-            logs = await relay.getPastEvents('NewRelayed', {
-                fromBlock: await web3.eth.getBlockNumber(),
-                toBlock: 'latest'
-            });
-            logs[0].returnValues.old.should.be.deep.equal(accounts[0]);
-            logs[0].returnValues.current.should.be.deep.equal(relayed.address);
-        });
-    });
+    //         logs = await relay.getPastEvents('NewRelayed', {
+    //             fromBlock: await web3.eth.getBlockNumber(),
+    //             toBlock: 'latest'
+    //         });
+    //         logs[0].returnValues.old.should.be.deep.equal(accounts[0]);
+    //         logs[0].returnValues.current.should.be.deep.equal(relayed.address);
+    //     });
+    // });
 
-    describe("#setSystem", async function () {
+    // describe("#setSystem", async function () {
 
-        beforeEach(async function () {
-            (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(SYSTEM_ADDRESS);
-        });
+    //     beforeEach(async function () {
+    //         (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(SYSTEM_ADDRESS);
+    //     });
 
-        afterEach(async function () {
-            (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(SYSTEM_ADDRESS);
-        });
+    //     afterEach(async function () {
+    //         (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(SYSTEM_ADDRESS);
+    //     });
 
-        xit('should allow only the owner to set system address', async function () {
-            await expect(relay.methods.setSystem(accounts[0]).send({ from: accounts[1], gas: standardGas }))
-                .to.be.rejectedWith(REVERT_ERROR_MSG);
-            await expect(relay.methods.setSystem(accounts[1]).send({ from: accounts[0], gas: standardGas }))
-                .to.be.rejectedWith(REVERT_ERROR_MSG);
+    //     xit('should allow only the owner to set system address', async function () {
+    //         await expect(relay.methods.setSystem(accounts[0]).send({ from: accounts[1], gas: standardGas }))
+    //             .to.be.rejectedWith(REVERT_ERROR_MSG);
+    //         await expect(relay.methods.setSystem(accounts[1]).send({ from: accounts[0], gas: standardGas }))
+    //             .to.be.rejectedWith(REVERT_ERROR_MSG);
 
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(accounts[1]).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
+    //         await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setSystem(accounts[1]).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
 
-            (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(accounts[1]);
+    //         (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(accounts[1]);
 
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(SYSTEM_ADDRESS).encodeABI()
-                },
-                relay.address,
-                1
-            ).should.be.fulfilled;
-        });
+    //         await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setSystem(SYSTEM_ADDRESS).encodeABI()
+    //             },
+    //             relay.address,
+    //             1
+    //         ).should.be.fulfilled;
+    //     });
 
-        xit('should not allow to set the system address to 0x0', async function () {
-            const logs = await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(DEFAULT_ADDRESS).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-            should.exist(logs.events['ExecutionFailure']);
-        });
+    //     xit('should not allow to set the system address to 0x0', async function () {
+    //         const logs = await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setSystem(DEFAULT_ADDRESS).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
+    //         should.exist(logs.events['ExecutionFailure']);
+    //     });
 
-        xit('should not allow to set the system address to the already existing one', async function () {
-            const logs = await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(SYSTEM_ADDRESS).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-            should.exist(logs.events['ExecutionFailure']);
-        });
-    });
+    //     xit('should not allow to set the system address to the already existing one', async function () {
+    //         const logs = await sendMultisigTransaction(
+    //             web3,
+    //             netOpsMultiSig,
+    //             {
+    //                 value: 0,
+    //                 data: relay.methods.setSystem(SYSTEM_ADDRESS).encodeABI()
+    //             },
+    //             relay.address,
+    //             0
+    //         ).should.be.fulfilled;
+    //         should.exist(logs.events['ExecutionFailure']);
+    //     });
+    // });
 
     describe("#getValidators", async function () {
 
@@ -271,369 +279,301 @@ describe('ValidatorSetRELAY contract', function () {
 
         it('should return the correct validators', async function () {
             let currentValidators = await relay.methods.getValidators().call();
-            currentValidators.should.be.deep.equal(initialValidators);
+            currentValidators.should.have.members(initialValidators);
 
-            console.log(testValidators[0])
-            console.log(relayed.address)
-            console.log(await relayed.methods.owner().call(), netOpsMultiSig.address)
-            console.log(relayed.methods.addValidator(testValidators[0]).encodeABI())
-            let logs = await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relayed.methods.addValidator(testValidators[0]).encodeABI()
-                },
-                relayed.address,
-                0
-            ).should.be.fulfilled;
-            console.log(logs)
-            should.exist(logs.events['Execution']);
-            console.log(1);
-            await forFinalization();
-            (await relay.methods.getValidators().call()).should.be.deep.equal(initialValidators.concat([testValidators[0]]));
-            console.log(2);
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relayed.methods.removeValidator(testValidators[0]).encodeABI()
-                },
-                relayed.address,
-                1
-            ).should.be.fulfilled;
-            console.log(logs);
-            should.exist(logs.events['Execution']);
-            console.log(3);
-            await forFinalization();
-            console.log(4);
-            (await relay.methods.getValidators().call()).should.be.deep.equal(currentValidators);
-
-            await expect(relayed.addValidator(accounts[1]).send({ from: accounts[1], gas: standardGas }))
-                .to.be.rejectedWith(REVERT_ERROR_MSG);
-            (await relay.methods.getValidators().call()).should.be.deep.equal(currentValidators);
-
-            await expect(relayed.removeValidator(initialValidators[0]).send({ from: accounts[0], gas: standardGas }))
-                .to.be.rejectedWith(REVERT_ERROR_MSG);
-            (await relay.methods.getValidators().call()).should.be.deep.equal(currentValidators);
-
-            console.log(5);
-            let currentValidatorsLength = await relayed.getValidatorsNum().call();
-            currentValidatorsLength.toNumber(10).should.equal(initialValidators.length);
         });
     });
 
     describe('#finalizeChange', async function () {
-/*
-        beforeEach(async function () {
-            await relayed.addValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
+        this.timeout(300000);
+    
+        it('system should set finalized to true', async function () {
+          (await relayed.methods.finalized().call()).should.be.true;
+          const txA = { 
+              value: '0', 
+              data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
+          };
+          await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, ChainspecValues.address_book["VALIDATOR_RELAYED"] );
+          (await relayed.methods.finalized().call()).should.be.false;
+          await utils.waitForSomething([
+            {execute: relayed.methods.isActiveValidator(utils.testValidators[0]).call, waitUntil: true },
+            {execute: relayed.methods.finalized().call, waitUntil: true}
+          ]);
+          
+          (await relayed.methods.finalized().call()).should.be.true;
+    
+          const txB = { 
+              value: '0', 
+              data: relayed.methods.removeValidator(utils.testValidators[0]).encodeABI()
+          };
+          await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, ChainspecValues.address_book["VALIDATOR_RELAYED"] );
+          (await relayed.methods.finalized().call()).should.be.false;
+          
+          await utils.waitForSomething([
+            {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
+            {execute: relayed.methods.finalized().call, waitUntil: true}
+          ]);
+    
+          (await relayed.methods.finalized().call()).should.be.true;
+          
         });
-
-        it('should only be callable by system', async function () {
-            await relay.methods.finalizeChange({ from: accounts[5] }).should.be.rejectedWith(NOT_SYSTEM_ERROR);
-            await relay.methods.finalizeChange({ from: owner }).should.be.rejectedWith(NOT_SYSTEM_ERROR);
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-        });
-
-        it('should set finalized to true', async function () {
-            let finalized = await relayed.finalized().call();
-            finalized.should.be.false;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-            finalized = await relayed.finalized().call();
-            finalized.should.be.true;
-        });
-
-        it('should set currentValidators to pendingValidators in relayed', async function () {
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-
-            let currentValidators = await relayed.getValidators().call();
-            let pendingValidators = await relayed.getPendingValidators().call();
-            currentValidators.should.be.deep.equal(pendingValidators);
-
-            const currentBlocknumber = (await web3.eth.getBlockNumber());
-            const events = await relayed.getPastEvents(
-                "ChangeFinalized",
-                {
-                    "fromBlock": currentBlocknumber,
-                    "toBlock": currentBlocknumber
-                }
-            );
-            events.length.should.equal(1);
-            events[0].args.validatorSet.should.be.deep.equal(currentValidators);
-        });
-
+    
         it('should set currentValidators to pendingValidators after addValidator call', async function () {
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-
-            await relayed.addValidator(accounts[3]).send({ from: accounts[3] }).should.be.rejectedWith(REVERT_ERROR_MSG);
-            await relayed.addValidator(accounts[3]).send({ from: owner }).should.be.fulfilled;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-
-            let currentValidators = await relayed.getValidators().call();
-            let pendingValidators = await relayed.getPendingValidators().call();
-            currentValidators.should.be.deep.equal(pendingValidators);
-
-            await relayed.addValidator(accounts[4]).send({ from: owner }).should.be.fulfilled;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-
-            currentValidators = await relayed.getValidators().call();
-            pendingValidators = await relayed.getPendingValidators().call();
-            currentValidators.should.be.deep.equal(pendingValidators);
-
-            const expected = [accounts[1], accounts[2], accounts[3], accounts[4]];
-            expected.should.be.deep.equal(pendingValidators);
-            expected.should.be.deep.equal(currentValidators);
-        });
-
-        it('should set currentValidators to pendingValidators after removeValidator call', async function () {
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-
-            await relayed.addValidator(accounts[3]).send({ from: owner }).should.be.fulfilled;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-
-            await relayed.removeValidator(accounts[2]).send({ from: accounts[3] }).should.be.rejectedWith(REVERT_ERROR_MSG);
-
-            let currentValidators;
-            let pendingValidators;
-            for (let i = 1; i <= 3; i++) {
-                await relayed.removeValidator(accounts[i]).send({ from: owner }).should.be.fulfilled;
-                await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-
-                currentValidators = await relayed.getValidators().call();
-                pendingValidators = await relayed.getPendingValidators().call();
-                currentValidators.should.be.deep.equal(pendingValidators);
-            }
-            const expected = [];
-            pendingValidators.should.be.deep.equal(expected);
-            currentValidators.should.be.deep.equal(expected);
+          (await relayed.methods.finalized().call()).should.be.true;
+          const txA = { 
+              value: '0', 
+              data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
+          };
+          await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, ChainspecValues.address_book["VALIDATOR_RELAYED"] );
+          (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getPendingValidators().call())
+         
+          await utils.waitForSomething([
+            {execute: relayed.methods.isActiveValidator(utils.testValidators[0]).call, waitUntil: true },
+            {execute: relayed.methods.finalized().call, waitUntil: true}
+          ]);
+          
+          (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
+    
+          const txB = { 
+              value: '0', 
+              data: relayed.methods.removeValidator(utils.testValidators[0]).encodeABI()
+          };
+          await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, ChainspecValues.address_book["VALIDATOR_RELAYED"] );
+          (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getPendingValidators().call())
+          
+          await utils.waitForSomething([
+            {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
+            {execute: relayed.methods.finalized().call, waitUntil: true}
+          ]);
+          
+          (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
         });
     });
 
-    describe("#callbackInitiateChange", async function () {
+    // describe("#callbackInitiateChange", async function () {
 
-        it('should allow to be called only by relayed contract', async function () {
-            await relay.methods.callbackInitiateChange("0x0", []).send({ from: owner }).should.be.rejectedWith(NOT_RELAYED_ERROR);
-            await relay.methods.callbackInitiateChange("0x0", []).send({ from: system }).should.be.rejectedWith(NOT_RELAYED_ERROR);
-            await relay.methods.callbackInitiateChange("0x0", []).send({ from: accounts[2] }).should.be.rejectedWith(NOT_RELAYED_ERROR);
+    //     it('should allow to be called only by relayed contract', async function () {
+    //         await relay.methods.callbackInitiateChange("0x0", []).send({ from: owner }).should.be.rejectedWith(NOT_RELAYED_ERROR);
+    //         await relay.methods.callbackInitiateChange("0x0", []).send({ from: system }).should.be.rejectedWith(NOT_RELAYED_ERROR);
+    //         await relay.methods.callbackInitiateChange("0x0", []).send({ from: accounts[2] }).should.be.rejectedWith(NOT_RELAYED_ERROR);
 
-            await callBackWithEvent("0x0", []).send({ from: owner }).should.be.fulfilled;
-        });
+    //         await callBackWithEvent("0x0", []).send({ from: owner }).should.be.fulfilled;
+    //     });
 
-        it('should emit event correctly', async function () {
-            const expected = [EMPTY_BYTES32, []];
-            await callBackWithEvent(expected[0], expected[1]).send({ from: owner }).should.be.fulfilled;
+    //     it('should emit event correctly', async function () {
+    //         const expected = [EMPTY_BYTES32, []];
+    //         await callBackWithEvent(expected[0], expected[1]).send({ from: owner }).should.be.fulfilled;
 
-            const currentBlocknumber = (await web3.eth.getBlockNumber());
-            const events = await relay.methods.getPastEvents(
-                "InitiateChange",
-                {
-                    "fromBlock": currentBlocknumber,
-                    "toBlock": currentBlocknumber
-                }
-            );
-            events.length.should.equal(1);
-            events[0].args._parentHash.should.be.equal(expected[0]);
-            events[0].args._newSet.should.be.deep.equal(expected[1]);
-        });
-    });
+    //         const currentBlocknumber = (await web3.eth.getBlockNumber());
+    //         const events = await relay.methods.getPastEvents(
+    //             "InitiateChange",
+    //             {
+    //                 "fromBlock": currentBlocknumber,
+    //                 "toBlock": currentBlocknumber
+    //             }
+    //         );
+    //         events.length.should.equal(1);
+    //         events[0].args._parentHash.should.be.equal(expected[0]);
+    //         events[0].args._newSet.should.be.deep.equal(expected[1]);
+    //     });
+    // });
 
-    describe('#reportMalicious', async function () {
+    // describe('#reportMalicious', async function () {
 
-        async function checkMaliciousEvent(expected) {
-            currentBlocknumber = await web3.eth.getBlockNumber();
-            const events = await relayed.getPastEvents(
-                "ReportedMalicious",
-                {
-                    "fromBlock": currentBlocknumber,
-                    "toBlock": currentBlocknumber
-                }
-            );
-            events[0].args.reporter.should.be.equal(expected.reporter);
-            events[0].args.reported.should.be.equal(expected.reported);
-            events[0].args.blocknum.toNumber(10).should.be.equal(expected.blocknum);
-        }
+    //     async function checkMaliciousEvent(expected) {
+    //         currentBlocknumber = await web3.eth.getBlockNumber();
+    //         const events = await relayed.getPastEvents(
+    //             "ReportedMalicious",
+    //             {
+    //                 "fromBlock": currentBlocknumber,
+    //                 "toBlock": currentBlocknumber
+    //             }
+    //         );
+    //         events[0].args.reporter.should.be.equal(expected.reporter);
+    //         events[0].args.reported.should.be.equal(expected.reported);
+    //         events[0].args.blocknum.toNumber(10).should.be.equal(expected.blocknum);
+    //     }
 
-        beforeEach(async function () {
-            await relayed.addValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-        });
+    //     beforeEach(async function () {
+    //         await relayed.addValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
+    //         await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
+    //     });
 
-        it('should be called successfully', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
-            await checkMaliciousEvent({
-                reporter: accounts[1],
-                reported: accounts[2],
-                blocknum: bn
-            });
-        });
+    //     it('should be called successfully', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
+    //         await checkMaliciousEvent({
+    //             reporter: accounts[1],
+    //             reported: accounts[2],
+    //             blocknum: bn
+    //         });
+    //     });
 
-        it('should only be called by an active validator', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
-            await relay.methods.reportMalicious(accounts[1], bn + 1, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
-            await relay.methods.reportMalicious(accounts[1], bn + 2, "0x0").send({ from: accounts[4] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-            await relay.methods.reportMalicious(accounts[2], bn + 3, "0x0").send({ from: accounts[3] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-        });
+    //     it('should only be called by an active validator', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
+    //         await relay.methods.reportMalicious(accounts[1], bn + 1, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
+    //         await relay.methods.reportMalicious(accounts[1], bn + 2, "0x0").send({ from: accounts[4] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //         await relay.methods.reportMalicious(accounts[2], bn + 3, "0x0").send({ from: accounts[3] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //     });
 
-        it('should only be called on an active validator', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
-            await relay.methods.reportMalicious(accounts[1], bn + 1, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
-            await relay.methods.reportMalicious(accounts[3], bn + 2, "0x0").send({ from: accounts[1] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-            await relay.methods.reportMalicious(accounts[4], bn + 3, "0x0").send({ from: accounts[2] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-        });
+    //     it('should only be called on an active validator', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
+    //         await relay.methods.reportMalicious(accounts[1], bn + 1, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
+    //         await relay.methods.reportMalicious(accounts[3], bn + 2, "0x0").send({ from: accounts[1] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //         await relay.methods.reportMalicious(accounts[4], bn + 3, "0x0").send({ from: accounts[2] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //     });
 
-        it('should only be called on existing block number', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[2], bn - 1, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
-            await relay.methods.reportMalicious(accounts[1], bn, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
+    //     it('should only be called on existing block number', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[2], bn - 1, "0x0").send({ from: accounts[1] }).should.be.fulfilled;
+    //         await relay.methods.reportMalicious(accounts[1], bn, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
 
-            // works with BLOCKNUM_NOT_VALID_ERROR too in tests, but for some magical reason fails in solidity-coverage
-            await relay.methods.reportMalicious(accounts[2], (await web3.eth.getBlockNumber()) + 1, "0x0").send({ from: accounts[1] })
-                .should.be.rejectedWith(REVERT_ERROR_MSG);
-            await relay.methods.reportMalicious(accounts[1], (await web3.eth.getBlockNumber()) + 100, "0x0").send({ from: accounts[2] })
-                .should.be.rejectedWith(REVERT_ERROR_MSG);
-        });
+    //         // works with BLOCKNUM_NOT_VALID_ERROR too in tests, but for some magical reason fails in solidity-coverage
+    //         await relay.methods.reportMalicious(accounts[2], (await web3.eth.getBlockNumber()) + 1, "0x0").send({ from: accounts[1] })
+    //             .should.be.rejectedWith(REVERT_ERROR_MSG);
+    //         await relay.methods.reportMalicious(accounts[1], (await web3.eth.getBlockNumber()) + 100, "0x0").send({ from: accounts[2] })
+    //             .should.be.rejectedWith(REVERT_ERROR_MSG);
+    //     });
 
-        it('should emit the event correctly', async function () {
-            let bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[1], bn, "0x0").send({ from: accounts[2] })
-                .should.be.fulfilled;
-            await checkMaliciousEvent({
-                reporter: accounts[2],
-                reported: accounts[1],
-                blocknum: bn
-            });
+    //     it('should emit the event correctly', async function () {
+    //         let bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[1], bn, "0x0").send({ from: accounts[2] })
+    //             .should.be.fulfilled;
+    //         await checkMaliciousEvent({
+    //             reporter: accounts[2],
+    //             reported: accounts[1],
+    //             blocknum: bn
+    //         });
 
-            bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[2], bn, "0x0123456789abcdef").send({ from: accounts[1] })
-                .should.be.fulfilled;
-            await checkMaliciousEvent({
-                reporter: accounts[1],
-                reported: accounts[2],
-                blocknum: bn
-            });
-        });
+    //         bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[2], bn, "0x0123456789abcdef").send({ from: accounts[1] })
+    //             .should.be.fulfilled;
+    //         await checkMaliciousEvent({
+    //             reporter: accounts[1],
+    //             reported: accounts[2],
+    //             blocknum: bn
+    //         });
+    //     });
 
-        it('should not accept report on a pending-to-be-added validator', async function () {
-            await relayed.addValidator(accounts[3]).send({ from: owner }).should.be.fulfilled;
-            let bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[3], bn, "0x0").send({ from: accounts[1] }).should.be.rejectedWith(REVERT_ERROR_MSG);
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-            bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[3], bn, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
-        });
+    //     it('should not accept report on a pending-to-be-added validator', async function () {
+    //         await relayed.addValidator(accounts[3]).send({ from: owner }).should.be.fulfilled;
+    //         let bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[3], bn, "0x0").send({ from: accounts[1] }).should.be.rejectedWith(REVERT_ERROR_MSG);
+    //         await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
+    //         bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[3], bn, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
+    //     });
 
-        it('should accept report on a pending-to-be-removed validator', async function () {
-            await relayed.removeValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
-            let bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-            bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[2] }).should.be.rejectedWith(REVERT_ERROR_MSG);
-        });
-    });
+    //     it('should accept report on a pending-to-be-removed validator', async function () {
+    //         await relayed.removeValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
+    //         let bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[2] }).should.be.fulfilled;
+    //         await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
+    //         bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportMalicious(accounts[2], bn, "0x0").send({ from: accounts[2] }).should.be.rejectedWith(REVERT_ERROR_MSG);
+    //     });
+    // });
 
-    describe('#reportBenign', async function () {
+    // describe('#reportBenign', async function () {
 
-        async function checkBenign(expected) {
-            currentBlocknumber = await web3.eth.getBlockNumber();
-            const events = await relayed.getPastEvents(
-                "ReportedBenign",
-                {
-                    "fromBlock": currentBlocknumber,
-                    "toBlock": currentBlocknumber
-                }
-            );
-            events[0].args.reporter.should.be.equal(expected.reporter);
-            events[0].args.reported.should.be.equal(expected.reported);
-            events[0].args.blocknum.toNumber(10).should.be.equal(expected.blocknum);
-        }
+    //     async function checkBenign(expected) {
+    //         currentBlocknumber = await web3.eth.getBlockNumber();
+    //         const events = await relayed.getPastEvents(
+    //             "ReportedBenign",
+    //             {
+    //                 "fromBlock": currentBlocknumber,
+    //                 "toBlock": currentBlocknumber
+    //             }
+    //         );
+    //         events[0].args.reporter.should.be.equal(expected.reporter);
+    //         events[0].args.reported.should.be.equal(expected.reported);
+    //         events[0].args.blocknum.toNumber(10).should.be.equal(expected.blocknum);
+    //     }
 
-        beforeEach(async function () {
-            await relayed.addValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-        });
+    //     beforeEach(async function () {
+    //         await relayed.addValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
+    //         await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
+    //     });
 
-        it('should be called successfully', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] }).should.be.fulfilled;
-            await checkBenign({
-                reporter: accounts[1],
-                reported: accounts[2],
-                blocknum: bn
-            });
-        });
+    //     it('should be called successfully', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] }).should.be.fulfilled;
+    //         await checkBenign({
+    //             reporter: accounts[1],
+    //             reported: accounts[2],
+    //             blocknum: bn
+    //         });
+    //     });
 
-        it('should only be called by an active validator', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] }).should.be.fulfilled;
-            await relay.methods.reportBenign(accounts[1], bn + 1).send({ from: accounts[2] }).should.be.fulfilled;
-            await relay.methods.reportBenign(accounts[1], bn + 2).send({ from: accounts[4] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-            await relay.methods.reportBenign(accounts[2], bn + 3).send({ from: accounts[3] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-        });
+    //     it('should only be called by an active validator', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] }).should.be.fulfilled;
+    //         await relay.methods.reportBenign(accounts[1], bn + 1).send({ from: accounts[2] }).should.be.fulfilled;
+    //         await relay.methods.reportBenign(accounts[1], bn + 2).send({ from: accounts[4] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //         await relay.methods.reportBenign(accounts[2], bn + 3).send({ from: accounts[3] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //     });
 
-        it('should only be called on an active validator', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] }).should.be.fulfilled;
-            await relay.methods.reportBenign(accounts[1], bn + 1).send({ from: accounts[2] }).should.be.fulfilled;
-            await relay.methods.reportBenign(accounts[3], bn + 2).send({ from: accounts[1] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-            await relay.methods.reportBenign(accounts[4], bn + 3).send({ from: accounts[2] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
-        });
+    //     it('should only be called on an active validator', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] }).should.be.fulfilled;
+    //         await relay.methods.reportBenign(accounts[1], bn + 1).send({ from: accounts[2] }).should.be.fulfilled;
+    //         await relay.methods.reportBenign(accounts[3], bn + 2).send({ from: accounts[1] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //         await relay.methods.reportBenign(accounts[4], bn + 3).send({ from: accounts[2] }).should.be.rejectedWith(NOT_VALIDATOR_ERROR);
+    //     });
 
-        it('should only be called on existing block number', async function () {
-            const bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[2], bn - 1).send({ from: accounts[1] }).should.be.fulfilled;
-            await relay.methods.reportBenign(accounts[1], bn).send({ from: accounts[2] }).should.be.fulfilled;
+    //     it('should only be called on existing block number', async function () {
+    //         const bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[2], bn - 1).send({ from: accounts[1] }).should.be.fulfilled;
+    //         await relay.methods.reportBenign(accounts[1], bn).send({ from: accounts[2] }).should.be.fulfilled;
 
-            // works with BLOCKNUM_NOT_VALID_ERROR too in tests, but for some magical reason fails in solidity-coverage
-            await relay.methods.reportBenign(accounts[2], (await web3.eth.getBlockNumber()) + 1).send({ from: accounts[1] })
-                .should.be.rejectedWith(REVERT_ERROR_MSG);
-            await relay.methods.reportBenign(accounts[1], (await web3.eth.getBlockNumber()) + 100).send({ from: accounts[2] })
-                .should.be.rejectedWith(REVERT_ERROR_MSG);
-        });
+    //         // works with BLOCKNUM_NOT_VALID_ERROR too in tests, but for some magical reason fails in solidity-coverage
+    //         await relay.methods.reportBenign(accounts[2], (await web3.eth.getBlockNumber()) + 1).send({ from: accounts[1] })
+    //             .should.be.rejectedWith(REVERT_ERROR_MSG);
+    //         await relay.methods.reportBenign(accounts[1], (await web3.eth.getBlockNumber()) + 100).send({ from: accounts[2] })
+    //             .should.be.rejectedWith(REVERT_ERROR_MSG);
+    //     });
 
-        it('should emit the event correctly', async function () {
-            let bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[1], bn).send({ from: accounts[2] })
-                .should.be.fulfilled;
-            await checkBenign({
-                reporter: accounts[2],
-                reported: accounts[1],
-                blocknum: bn
-            });
+    //     it('should emit the event correctly', async function () {
+    //         let bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[1], bn).send({ from: accounts[2] })
+    //             .should.be.fulfilled;
+    //         await checkBenign({
+    //             reporter: accounts[2],
+    //             reported: accounts[1],
+    //             blocknum: bn
+    //         });
 
-            bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] })
-                .should.be.fulfilled;
-            await checkBenign({
-                reporter: accounts[1],
-                reported: accounts[2],
-                blocknum: bn
-            });
-        });
+    //         bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[1] })
+    //             .should.be.fulfilled;
+    //         await checkBenign({
+    //             reporter: accounts[1],
+    //             reported: accounts[2],
+    //             blocknum: bn
+    //         });
+    //     });
 
-        it('should not accept report on a pending-to-be-added validator', async function () {
-            await relayed.addValidator(accounts[3]).send({ from: owner }).should.be.fulfilled;
-            let bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[3], bn).send({ from: accounts[1] }).should.be.rejectedWith(REVERT_ERROR_MSG);
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-            bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[3], bn).send({ from: accounts[2] }).should.be.fulfilled;
-        });
+    //     it('should not accept report on a pending-to-be-added validator', async function () {
+    //         await relayed.addValidator(accounts[3]).send({ from: owner }).should.be.fulfilled;
+    //         let bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[3], bn).send({ from: accounts[1] }).should.be.rejectedWith(REVERT_ERROR_MSG);
+    //         await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
+    //         bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[3], bn).send({ from: accounts[2] }).should.be.fulfilled;
+    //     });
 
-        it('should accept report on a pending-to-be-removed validator', async function () {
-            await relayed.removeValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
-            let bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[2] }).should.be.fulfilled;
-            await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
-            bn = await web3.eth.getBlockNumber();
-            await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[2] }).should.be.rejectedWith(REVERT_ERROR_MSG);
-        });
-*/
-    });
+    //     it('should accept report on a pending-to-be-removed validator', async function () {
+    //         await relayed.removeValidator(accounts[2]).send({ from: owner }).should.be.fulfilled;
+    //         let bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[2] }).should.be.fulfilled;
+    //         await relay.methods.finalizeChange({ from: system }).should.be.fulfilled;
+    //         bn = await web3.eth.getBlockNumber();
+    //         await relay.methods.reportBenign(accounts[2], bn).send({ from: accounts[2] }).should.be.rejectedWith(REVERT_ERROR_MSG);
+    //     });
+
+    // });
     
 });
 

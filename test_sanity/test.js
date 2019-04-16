@@ -69,6 +69,12 @@ describe(' Contracts', function() {
 
   });
 
+  after(async () => {
+    
+    await web3.currentProvider.connection.close()
+    console.log('connection closed')
+  })
+
   describe('Validator Relayed', function() {
     this.timeout(120000);
     

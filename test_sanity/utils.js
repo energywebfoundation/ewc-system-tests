@@ -23,6 +23,23 @@ const send = (method, params = []) => {
     }));
 }
 
+const  sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+const waitForSomething = async (waitFunctions, ms) => {
+    
+    let waiting = false;
+    do {
+        waiting = false;
+        for (waitFunction of waitFunctions) {
+            waiting = waiting ? true : (await waitFunction.execute()) !== waitFunction.waitUntil;
+        }
+        await sleep(5000);
+    } while (waiting);
+}
+   
+
 async function assertThrowsAsync(fn, msg) {
     try {
         await fn();
@@ -36,6 +53,11 @@ async function assertThrowsAsync(fn, msg) {
 function addTestWallets(web3) {
     
     let accounts = JSON.parse(fs.readFileSync(__dirname + "/../accounts/testaccounts.json"));
+    accounts.push(
+    {
+        "privateKey": "0x989a1e104b66770d8258ba292f92c6cfea9afb348fca919a5f51033444502062",
+        "address": "0x1e490821f6ca7c66aa0a8f880ad460dda90be6bf"
+    })
     accounts.map(acc => web3.eth.accounts.wallet.add(acc.privateKey));
 }
 
@@ -46,16 +68,20 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
     const confirmer = submitterWalletPosition == 0 ? web3.eth.accounts.wallet.accounts['1'].address : web3.eth.accounts.wallet.accounts['0'].address;
     
     const submitGas = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).estimateGas({from: submitter});
+
     const logs = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).send({
         from: submitter, 
-        gas: Math.floor(submitGas * 5)
+        //gas: Math.floor(submitGas * 5)
+        gas: 5000000
 
     });
+
     const transactionID = logs.events.Submission.returnValues.transactionId.toString(10);
     const confirmGas = await multisig.methods.confirmTransaction(transactionID).estimateGas({from: confirmer});
     return multisig.methods.confirmTransaction(transactionID).send({
         from: confirmer,
-        gas: Math.floor(confirmGas * 5)
+        //gas: Math.floor(confirmGas * 5)
+        gas: 5000000
     });
 }
 
@@ -104,6 +130,8 @@ const testPayoutAddresses = ["0x00371459b526eA286E3e898950cE8F713B540f0B","0x00d
 const initialValidators = ChainspecValues.address_book["INITAL_VALIDATORS"];
 
 module.exports = {
+    sleep,
+    waitForSomething,
     assertThrowsAsync,
     REVERT_ERROR_MSG,
     DEFAULT_ADDRESS,

@@ -1,12 +1,9 @@
 const fs = require("fs");
 
-const REVERT_ERROR_MSG = "VM Exception while processing transaction: revert";
-const PARITY_REVERT_MSG = "Transaction has been reverted by the EVM";
+const REVERT_ERROR_MSG = "Transaction has been reverted by the EVM";
 const DEFAULT_ADDRESS = "0x0000000000000000000000000000000000000000";
 const SYSTEM_ADDRESS = "0xffffFFFfFFffffffffffffffFfFFFfffFFFfFFfE";
 const EMPTY_BYTES32 = "0x0000000000000000000000000000000000000000000000000000000000000000";
-
-const CHAINSPEC_VALUES = "./node_modules/ewf-genesis-generator/sample_chainspec/chainspec_skeletons/hardcoded_values_volta.json";
 
 const ValidatorState = {
     NonValidator: "0",
@@ -14,6 +11,7 @@ const ValidatorState = {
     PendingToBeAdded: "2",
     PendingToBeRemoved: "3"
 }
+
 
 const send = (method, params = []) => {
     return new Promise((resolve, reject) => web3.currentProvider.send({id: 0, jsonrpc: '2.0', method, params }, (e, data) => {
@@ -62,14 +60,14 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
     multisig.transactionConfirmationBlocks = 1
 
     const submitter = web3.eth.accounts.wallet.accounts[submitterWalletPosition].address;
-    const confirmer = submitterWalletPosition == 0 ? web3.eth.accounts.wallet.accounts['1'].address : web3.eth.accounts.wallet.accounts[submitterWalletPosition].address;
+    const confirmer = submitterWalletPosition == 0 ? web3.eth.accounts.wallet.accounts['1'].address : web3.eth.accounts.wallet.accounts['0'].address;
     
     const submitGas = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).estimateGas({from: submitter});
 
     const logs = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).send({
         from: submitter, 
-        gas: Math.floor(submitGas * 5),
-        nonce: (await web3.eth.getTransactionCount(submitter))
+        //gas: Math.floor(submitGas * 5)
+        gas: 5000000
 
     });
 
@@ -77,17 +75,15 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
     const confirmGas = await multisig.methods.confirmTransaction(transactionID).estimateGas({from: confirmer});
     return multisig.methods.confirmTransaction(transactionID).send({
         from: confirmer,
-        gas: Math.floor(confirmGas * 5),
-        nonce: (await web3.eth.getTransactionCount(confirmer))
-
+        //gas: Math.floor(confirmGas * 5)
+        gas: 5000000
     });
 }
 
-
 const ChainspecValues =
-JSON.parse(
-    fs.readFileSync(__dirname + "/../node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json")
-);
+    JSON.parse(
+        fs.readFileSync(__dirname + "/../node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json")
+    );
 
 const MultiSigWalletJSON =
     JSON.parse(
@@ -106,6 +102,27 @@ const BlockRewardJSON = JSON.parse(
         fs.readFileSync(__dirname + "/../node_modules/genome-system-contracts/build/contracts/BlockReward.json")
 );
 
+const TestSCurveProvder = require("./blockreward_function");
+
+const testValidators = [
+    "0x185a57da13cd6c54b1158b1876a19a161dc7cb5e",
+    "0xacb657870cd1186d8e821d27dfd611a8e8a049d0",
+    "0xb56d4421edfe103874c244fd9e257effd56cb5b5",
+    "0x995035660ac462805c8c3ac8a0b48184a20fef74",
+    "0x9338b27a3836b79ef306db4a3ac3cc17c6b69a0b",
+    "0xe3f0a5c3345f93b3a182a18fb523161ec27db3d1",
+    "0xcd96492e1647ce2db5e87eaf7eb4b9f9ae108301",
+    "0xf896d8b88928db52cb080bffa9908bd84b12606e",
+    "0x12c7d165a7b38cbbf26f43d0025334293973425b",
+    "0x958980de5bfccba9aa112a0c8103cc83d7777ca5",
+    "0x951dc7541a6cd7b5fa7908d18ed5a9552c99b475",
+    "0xbe548ce40179b360fab6ac188e1c2f42da588c7a",
+    "0x27ce8bf591c15cb5276b95c5f333ebb8d0746372"
+];
+// validator 1-3 + community
+const testPayoutAddresses = ["0x00371459b526eA286E3e898950cE8F713B540f0B","0x00d99132c825Ecfd224832EDe811177ad1512610","0x0019E00282A6C64d0B2a37df7B9c98B298cc605A","0x000E9A1A767eA9B3A092ED49c45Eb7f8e318BD39"];
+
+const initialValidators = ChainspecValues.address_book["INITAL_VALIDATORS"];
 
 module.exports = {
     sleep,
@@ -122,5 +139,9 @@ module.exports = {
     MultiSigWalletJSON,
     RelayedJSON,
     RelayJSON,
-    BlockRewardJSON
+    BlockRewardJSON,
+    initialValidators,
+    testValidators,
+    testPayoutAddresses,
+    TestSCurveProvder
 }

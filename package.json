@@ -13,6 +13,7 @@
   "dependencies": {
     "async": "^2.6.2",
     "chai": "^4.2.0",
+    "csv-parser": "^2.2.0",
     "ewf-genesis-generator": "git+ssh://git@github.com/energywebfoundation/ewf-genesis-generator.git",
     "genome-system-contracts": "git+ssh://git@github.com/energywebfoundation/genome-system-contracts.git",
     "mocha": "^6.0.2",

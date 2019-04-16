@@ -78,10 +78,6 @@ describe(' Contracts', function() {
     console.log('connection closed')
   })
 
-  // describe('constructor', async function () {
-  //   // Not possible to test on Volta
-  // });
-
   describe('#finalizeChange', async function () {
     this.timeout(300000);
 
@@ -104,12 +100,6 @@ describe(' Contracts', function() {
       (await relayed.methods.relaySet().call()).should.equal(values.address_book["VALIDATOR_RELAY"])
 
     });
-  
-
-    // system calls finalized not possible 
-    // it('should only be callable if changes are not finalized yet', async function () {
-      
-    // });
 
     it('system should set finalized to true', async function () {
       (await relayed.methods.finalized().call()).should.be.true;
@@ -123,7 +113,7 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       (await relayed.methods.finalized().call()).should.be.true;
 
       const txB = { 
@@ -141,11 +131,6 @@ describe(' Contracts', function() {
       (await relayed.methods.finalized().call()).should.be.true;
       
     });
-
-     // not possible
-    // it('should set currentValidators to pendingValidators after constructor', async function () {
-
-    // });
 
     it('should set currentValidators to pendingValidators after addValidator call', async function () {
       (await relayed.methods.finalized().call()).should.be.true;
@@ -160,7 +145,7 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
 
       const txB = { 
@@ -174,15 +159,9 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
     });
-
-
-    // done by previos test
-    // it('should set currentValidators to pendingValidators after removeValidator call', async function () {
-
-    // });
   });
 
   describe('#addValidator', async function () {
@@ -202,11 +181,6 @@ describe(' Contracts', function() {
       receipt.events.ExecutionFailure.should.not.be.undefined;   
     
     });
-
-    // not possible
-    // it('should not allow to add if not finalized', async function () {
-        
-    // });
 
     it('should not allow to add 0x0 addresses', async function () {
       const txA = { 
@@ -235,7 +209,6 @@ describe(' Contracts', function() {
           {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
           {execute: relayed.methods.finalized().call, waitUntil: true}
         ]);
-        await utils.sleep(7 * 5000);
 
         status = await relayed.methods.addressStatus(utils.testValidators[0]).call();
         status[0].toString(10).should.be.equal(utils.ValidatorState.FinalizedValidator);
@@ -251,17 +224,12 @@ describe(' Contracts', function() {
           {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
           {execute: relayed.methods.finalized().call, waitUntil: true}
         ]);
-        await utils.sleep(7 * 5000);
+        
         status = await relayed.methods.addressStatus(utils.testValidators[0]).call();
         status[0].toString(10).should.be.equal(utils.ValidatorState.NonValidator);
         status[1].toString(10).should.be.equal("0");
 
     });
-
-    // not possible
-    // it('should not be finalized before finalize call', async function () {
-
-    // });
 
     it('should update the pending set', async function () {
       const txA = { 
@@ -276,7 +244,6 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
       
       const txB = { 
           value: '0', 
@@ -288,14 +255,7 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
-
     });
-
-    // Not possible
-    // it('should not change the current validator set', async function () {
-
-    // });
 
     it('should emit InitiateChange in relay with correct blockhash and pendingValidators', async function () {
       await utils.sleep(5000);
@@ -326,7 +286,6 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
       
       const txB = { 
           value: '0', 
@@ -338,22 +297,12 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
     });
   })
 
   describe('#removeValidator', async function () {
     this.timeout(300000);
-
-    //done during #addValidator
-    // it('should remove validator', async function () {
-   
-    // });
-
-    // Not possible
-    // it('should not try to remove from empty pending list', async function () {
-
-    // });
 
     it('should only be callable by owner', async function () {
       const txA = { 
@@ -366,8 +315,7 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
-
+      
       await expect(relayed.methods.removeValidator(utils.testValidators[0]).send({ from: web3.eth.accounts.wallet.accounts['2'].address }))
         .to.be.rejectedWith(utils.PARITY_REVERT_MSG);
       
@@ -381,12 +329,10 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
       
     });
 
     it('should only be allowed to remove from existing set of validators', async function () {
-      //const currentValidators = await relayed.methods.getValidators().call()
       const txA = { 
         value: '0', 
         data: relayed.methods.removeValidator(utils.testValidators[0]).encodeABI()
@@ -394,12 +340,6 @@ describe(' Contracts', function() {
       const receipt = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAYED"] );
       receipt.events.ExecutionFailure.should.not.be.undefined;   
     });
-
-
-    // not possible
-    // it('should not allow to remove if not finalized', async function () {
-
-    // });
 
     it('should allow remove after a failed remove', async function () {
   
@@ -423,7 +363,7 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       (await relayed.methods.isActiveValidator(utils.testValidators[0]).call()).should.be.true
 
       const txC = { 
@@ -436,7 +376,7 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       (await relayed.methods.isActiveValidator(utils.testValidators[0]).call()).should.be.false
     });
 
@@ -454,7 +394,6 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
       
       const txB = { 
           value: '0', 
@@ -466,7 +405,7 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       pendingValidators = await relayed.methods.getPendingValidators().call()
       pendingValidators.length.should.be.equal(3);
     });
@@ -477,13 +416,12 @@ describe(' Contracts', function() {
         data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAYED"] );
-      
     
       await utils.waitForSomething([
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       let currentValidators = await relayed.methods.getValidators().call()
       currentValidators['3'].toLowerCase().should.be.equal(utils.testValidators[0].toLowerCase())
       currentValidators.length.should.be.equal(4);
@@ -498,26 +436,12 @@ describe(' Contracts', function() {
         {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-      await utils.sleep(7 * 5000);
+      
       currentValidators = await relayed.methods.getValidators().call()
       currentValidators.length.should.be.equal(3);
     });
 
-    // tested in addValidator
-    // it('should change address status correctly', async function () {
-
-    // });
-
-    // not possible
-    // it('should set finalized to false', async function () {
-
-    // });
   });
-
-  // not possible
-  // describe("#_removeValidator", async function () {
-
-  // });
 
   describe("#getValidatorsNum", async function () {
 
@@ -526,7 +450,6 @@ describe(' Contracts', function() {
         let currentValidatorsLength = await relayed.methods.getValidatorsNum.call();
         currentValidators.length.toString().should.be.equal(currentValidatorsLength.toString(10))
         currentValidators.length.toString().should.be.equal('3');
-
 
     });
   });
@@ -547,7 +470,6 @@ describe(' Contracts', function() {
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
 
-      await utils.sleep(7 * 5000);
       (await relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call()).should.be.false;
 
       const txB = { 
@@ -579,8 +501,6 @@ describe('#isPendingToBeRemoved', async function () {
         {execute: relayed.methods.isPendingToBeAdded(utils.testValidators[0]).call, waitUntil: false },
         {execute: relayed.methods.finalized().call, waitUntil: true}
       ]);
-
-      await utils.sleep(7 * 5000);
       
       (await relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call()).should.be.false;
       const txB = { 
@@ -635,7 +555,6 @@ describe('#isPending', async function () {
       {execute: relayed.methods.finalized().call, waitUntil: true}
     ]);
 
-    await utils.sleep(7 * 5000);
     (await relayed.methods.isPending(utils.testValidators[0]).call()).should.be.false;
 
     const txB = { 
@@ -702,7 +621,6 @@ describe("#setRelay", async function () {
       receipt.events.ExecutionFailure.should.not.be.undefined;  
     });
 
-
     it('should not allow same as the old one', async function () {
       const txA = { 
         value: '0', 
@@ -711,16 +629,6 @@ describe("#setRelay", async function () {
       const receipt = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAYED"] );
       receipt.events.ExecutionFailure.should.not.be.undefined;  
     });
-});
-
-// not possible
-// describe('#reportMalicious', async function () {
-
-// });
-
-// not possible
-// describe('#reportBenign', async function () {
-
-//   });
+  });
 
 });

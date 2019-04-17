@@ -259,11 +259,11 @@ describe(' Contracts', function() {
       res = await simpleReg.methods.entries("Hallo").call()
       assert.equal(res.owner, values.address_book["VALIDATOR_NETOPS"])
 
-      const txA = {
+      const txB = {
         value: '0',
         data: simpleReg.methods.transfer('Hallo2', '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').encodeABI()
       };
-      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, values.address_book["REGISTRY"]);
 
       await simpleReg.methods.transfer('Hallo2', values.address_book["VALIDATOR_NETOPS"]).send();
       //check if it worked

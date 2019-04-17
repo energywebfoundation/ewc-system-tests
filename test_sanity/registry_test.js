@@ -53,9 +53,9 @@ describe(' Contracts', function() {
       assert.equal(owner, values.address_book["VALIDATOR_NETOPS"])
     })
 
-    it("should not allow anyone except the owner to register", async () => {
+    it("should not allow anyone except the owner to reserve", async () => {
       try {
-        await simpleReg.methods.register("TestRegister").send({
+        await simpleReg.methods.reserve("TestRegister").send({
           gasLimit: '50000',
           from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
         })
@@ -115,6 +115,167 @@ describe(' Contracts', function() {
       assert.equal(txReturn, values.address_book["VALIDATOR_NETOPS"])
     });
 
+    it("should only allow owner to call reserve", async () => {
+      try {
+        await simpleReg.methods.reserve("TestRegister").send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+    it("should only allow owner to call setData", async () => {
+      try {
+        await simpleReg.methods.setData("TestRegister").send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+    it("should only allow owner to call setAddress", async () => {
+      try {
+        await simpleReg.methods.setAddress('0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+    it("should only allow owner to call setUint", async () => {
+      try {
+        await simpleReg.methods.setUint(12345).send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+    it("should only allow owner to call proposeReverse", async () => {
+      try {
+        await simpleReg.methods.proposeReverse("TestRegister", '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+    it("should only allow owner to call confirmReverse", async () => {
+      try {
+        await simpleReg.methods.confirmReverse("TestRegister").send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+    it("should only allow owner to call confirmReverseAs", async () => {
+      try {
+        await simpleReg.methods.confirmReverseAs("TestRegister", '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+
+    it("should only allow owner to transfer", async () => {
+      try {
+        await simpleReg.methods.transfer("TestRegister", '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+          gasLimit: '50000',
+          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        })
+      } catch (err) {}
+    })
+
   });
 
+  //since they are onetime tests I have no clue if they will pass
+  describe.skip("Registry one time tests", function() {
+    this.timeout(120000);
+
+    it("should reserve a name properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.reserve('Hallo').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      //check if it worked
+      res = await simpleReg.methods.entries("Hallo").call()
+      assert.equal(res.owner, values.address_book["VALIDATOR_NETOPS"])
+    })
+
+    it("should setData properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.setData('Hallo', 1234, 99999).encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      //check if it worked
+      res = await simpleReg.methods.getData("Hallo", 1234).call()
+      assert.equal(res, 99999)
+    })
+
+    it("should proposeReserve properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.proposeReverse('Hallo', '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      //check if it worked
+      res = await simpleReg.methods.getReverse("Hallo").call()
+    //assert.equal(res, 99999)
+    })
+
+    it("should confirmReserve properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.confirmReverse('Hallo').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      //check if it worked
+      res = await simpleReg.methods.getReverse("Hallo").call()
+    })
+
+    it("should removeReverse properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.removeReverse().encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+    })
+
+    it("should drain properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.confirmReverse('Hallo').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      //check if it worked
+      res = await web3.eth.getBalance(values.address_book["REGISTRY"])
+      assert.equal(res, 0)
+    })
+
+    it("should transfer properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.reserve('Hallo2').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      //check if it worked
+      res = await simpleReg.methods.entries("Hallo").call()
+      assert.equal(res.owner, values.address_book["VALIDATOR_NETOPS"])
+
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.transfer('Hallo2', '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+
+      await simpleReg.methods.transfer('Hallo2', values.address_book["VALIDATOR_NETOPS"]).send();
+      //check if it worked
+      res = await simpleReg.methods.entries("Hallo").call()
+      assert.equal(res.owner, values.address_book["VALIDATOR_NETOPS"])
+    })
+    it("should drop properly", async () => {
+      const txA = {
+        value: '0',
+        data: simpleReg.methods.drop('Hallo2').encodeABI()
+      };
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+    })
+  });
 });

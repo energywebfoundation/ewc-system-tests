@@ -77,7 +77,6 @@ describe('ValidatorSetRELAY contract', function () {
     console.log('connection closed')
     })
 
-    // hope these not break the chain, otherwise big oof
     describe("#setRelayed", async function () {
 
         beforeEach(async function () {

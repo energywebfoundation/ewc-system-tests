@@ -78,7 +78,7 @@ describe('ValidatorSetRELAY contract', function () {
     })
 
     // hope these not break the chain, otherwise big oof
-    describe.skip("#setRelayed", async function () {
+    describe("#setRelayed", async function () {
 
         beforeEach(async function () {
             (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
@@ -200,7 +200,7 @@ describe('ValidatorSetRELAY contract', function () {
         });
     });
 
-    describe.skip("#setSystem", async function () {
+    describe("#setSystem", async function () {
 
         beforeEach(async function () {
             (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(SYSTEM_ADDRESS);
@@ -268,7 +268,7 @@ describe('ValidatorSetRELAY contract', function () {
         });
     });
 
-    describe.skip("#getValidators", async function () {
+    describe("#getValidators", async function () {
 
         this.timeout(600000);
 
@@ -345,7 +345,7 @@ describe('ValidatorSetRELAY contract', function () {
         });
     });
 
-    describe.skip("#callbackInitiateChange", async function () {
+    describe("#callbackInitiateChange", async function () {
 
         it('should allow to be called only by relayed contract', async function () {
 

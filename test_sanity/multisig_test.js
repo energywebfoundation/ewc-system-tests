@@ -41,13 +41,13 @@ describe(' Contracts', function() {
     netOpsMultiSig = new web3.eth.Contract(MultiSigABI.abi, values.address_book["VALIDATOR_NETOPS"]);
   });
 
-  describe('Holding', function() {
+  describe('MultiSig', function() {
     this.timeout(120000);
 
     ///@dev needs to be adapted to the actual list format
     it("should have set all multisig owners correctly", async () => {
       var result = await new Promise((resolve, reject) => {
-        fs.createReadStream('./test_sanity/holding.csv')
+        fs.createReadStream('./test_sanity/multisig.csv')
           .pipe(csv())
           .on('data', (data) => results.push(data))
           .on('end', () => {

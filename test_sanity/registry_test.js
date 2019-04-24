@@ -62,8 +62,11 @@ describe(' Contracts', function() {
         await simpleReg.methods.reserve("TestRegister").send({
           gasLimit: '50000',
           from: ADDRESSES[1].address
-        })
-      } catch (err) {}
+        });
+        assert(false)
+      } catch (err) {
+        assert(true)
+      }
     })
 
     it("should allow the contract owner to set the registration fee", async () => {
@@ -73,7 +76,10 @@ describe(' Contracts', function() {
           gasLimit: '50000',
           from: ADDRESSES[1].address
         });
-      } catch (err) {}
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
 
       const txA = {
         value: '0',
@@ -124,16 +130,22 @@ describe(' Contracts', function() {
         await simpleReg.methods.reserve("TestRegister").send({
           gasLimit: '50000',
           from: ADDRESSES[1].address
-        })
-      } catch (err) {}
+        });
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
     it("should only allow owner to call setData", async () => {
       try {
         await simpleReg.methods.setData("TestRegister").send({
           gasLimit: '50000',
           from: ADDRESSES[1].address
-        })
-      } catch (err) {}
+        });
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
     it("should only allow owner to call setAddress", async () => {
       try {
@@ -141,39 +153,54 @@ describe(' Contracts', function() {
           gasLimit: '50000',
           from: ADDRESSES[1].address
         })
-      } catch (err) {}
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
     it("should only allow owner to call setUint", async () => {
       try {
         await simpleReg.methods.setUint(12345).send({
           gasLimit: '50000',
           from: ADDRESSES[1].address
-        })
-      } catch (err) {}
+        });
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
     it("should only allow owner to call proposeReverse", async () => {
       try {
         await simpleReg.methods.proposeReverse("TestRegister", ADDRESSES[1].address).send({
           gasLimit: '50000',
           from: ADDRESSES[1].address
-        })
-      } catch (err) {}
+        });
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
     it("should only allow owner to call confirmReverse", async () => {
       try {
         await simpleReg.methods.confirmReverse("TestRegister").send({
           gasLimit: '50000',
           from: ADDRESSES[1].address
-        })
-      } catch (err) {}
+        });
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
     it("should only allow owner to call confirmReverseAs", async () => {
       try {
         await simpleReg.methods.confirmReverseAs("TestRegister", ADDRESSES[1].address).send({
           gasLimit: '50000',
           from: ADDRESSES[1].address
-        })
-      } catch (err) {}
+        });
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
 
     it("should only allow owner to transfer", async () => {
@@ -182,7 +209,10 @@ describe(' Contracts', function() {
           gasLimit: '50000',
           from: ADDRESSES[1].address
         })
-      } catch (err) {}
+        assert(false);
+      } catch (err) {
+        assert(true);
+      }
     })
 
   });

@@ -262,7 +262,10 @@ describe(' Contracts', function() {
           from: ADDRESSES[0].address,
           gasLimit: 50000
         });
-      } catch (err) {}
+        assert(false)
+      } catch (err) {
+        assert(true)
+      }
     })
 
     it("should not allow anyone other then the logic contract to call setUpdateConfirmed", async function() {
@@ -271,7 +274,10 @@ describe(' Contracts', function() {
           from: ADDRESSES[0].address,
           gasLimit: 50000
         });
-      } catch (err) {}
+        assert(false)
+      } catch (err) {
+        assert(true)
+      }
     })
   });
 

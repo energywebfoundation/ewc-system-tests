@@ -61,7 +61,7 @@ describe(' Contracts', function() {
       try {
         await simpleReg.methods.reserve("TestRegister").send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
@@ -71,7 +71,7 @@ describe(' Contracts', function() {
       try {
         await simpleReg.methods.setFee(10).send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         });
       } catch (err) {}
 
@@ -98,15 +98,15 @@ describe(' Contracts', function() {
     it("should set a new owner", async () => {
       const txA = {
         value: '0',
-        data: simpleReg.methods.transferOwnership('0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').encodeABI()
+        data: simpleReg.methods.transferOwnership(ADDRESSES[1].address).encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
 
       txReturn = await simpleReg.methods.owner().call()
-      assert.equal(txReturn, '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b')
+      assert.equal(txReturn, ADDRESSES[1].address)
       await simpleReg.methods.transferOwnership(values.address_book["VALIDATOR_NETOPS"]).send({
         gasLimit: 50000,
-        from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+        from: ADDRESSES[1].address
       })
 
       const txB = {
@@ -123,7 +123,7 @@ describe(' Contracts', function() {
       try {
         await simpleReg.methods.reserve("TestRegister").send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
@@ -131,15 +131,15 @@ describe(' Contracts', function() {
       try {
         await simpleReg.methods.setData("TestRegister").send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
     it("should only allow owner to call setAddress", async () => {
       try {
-        await simpleReg.methods.setAddress('0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+        await simpleReg.methods.setAddress(ADDRESSES[1].address).send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
@@ -147,15 +147,15 @@ describe(' Contracts', function() {
       try {
         await simpleReg.methods.setUint(12345).send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
     it("should only allow owner to call proposeReverse", async () => {
       try {
-        await simpleReg.methods.proposeReverse("TestRegister", '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+        await simpleReg.methods.proposeReverse("TestRegister", ADDRESSES[1].address).send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
@@ -163,24 +163,24 @@ describe(' Contracts', function() {
       try {
         await simpleReg.methods.confirmReverse("TestRegister").send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
     it("should only allow owner to call confirmReverseAs", async () => {
       try {
-        await simpleReg.methods.confirmReverseAs("TestRegister", '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+        await simpleReg.methods.confirmReverseAs("TestRegister", ADDRESSES[1].address).send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
 
     it("should only allow owner to transfer", async () => {
       try {
-        await simpleReg.methods.transfer("TestRegister", '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').send({
+        await simpleReg.methods.transfer("TestRegister", ADDRESSES[1].address).send({
           gasLimit: '50000',
-          from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b'
+          from: ADDRESSES[1].address
         })
       } catch (err) {}
     })
@@ -198,7 +198,7 @@ describe(' Contracts', function() {
         gasPrice: 0,
         from: ADDRESSES[2].address,
         //to: values.address_book["VALIDATOR_NETOPS"],
-        to: "0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b",
+        to: ADDRESSES[1].address,
         value: web3.utils.toWei("2", "gwei")
       }
 
@@ -293,16 +293,16 @@ describe(' Contracts', function() {
 
       const txB = {
         value: '0',
-        data: simpleReg.methods.transfer(randomName, '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b').encodeABI()
+        data: simpleReg.methods.transfer(randomName, ADDRESSES[1].address).encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, values.address_book["REGISTRY"]);
 
       //check if it worked
       res = await simpleReg.methods.entries(randomName).call();
-      assert.equal(res.owner, '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b');
+      assert.equal(res.owner, ADDRESSES[1].address);
 
       await simpleReg.methods.transfer(randomName, values.address_book["VALIDATOR_NETOPS"]).send({
-        from: '0x49B6e2386Bbf577c457B231bfd1D36bd8A916b4b',
+        from: ADDRESSES[1].address,
         gasLimit: 50000
       });
       //check if it worked

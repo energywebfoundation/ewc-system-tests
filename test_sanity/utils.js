@@ -103,14 +103,14 @@ const MultiSigWalletJSON = JSON.parse(
 );
 
 const RelayedJSON = JSON.parse(
-  fs.readFileSync(__dirname + "/../node_modules/genome-system-contracts/build/contracts/ValidatorSetRelayed.json")
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/ValidatorSetRelayed.json")
 );
 const RelayJSON = JSON.parse(
-  fs.readFileSync(__dirname + "/../node_modules/genome-system-contracts/build/contracts/ValidatorSetRelay.json")
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/ValidatorSetRelay.json")
 );
 
 const BlockRewardJSON = JSON.parse(
-  fs.readFileSync(__dirname + "/../node_modules/genome-system-contracts/build/contracts/BlockReward.json")
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/BlockReward.json")
 );
 
 const TestSCurveProvder = require("./blockreward_function");

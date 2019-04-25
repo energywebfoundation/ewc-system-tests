@@ -37,7 +37,7 @@ describe(' Contracts', function() {
   let holdingABI;
 
   const RelayJSON = JSON.parse(
-      fs.readFileSync(__dirname + "/../node_modules/genome-system-contracts/build/contracts/ValidatorSetRelay.json")
+      fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/ValidatorSetRelay.json")
   );
 
   async function initEverything(done) {
@@ -51,9 +51,9 @@ describe(' Contracts', function() {
     values = JSON.parse(jso);
 
     // gets the ABI of all contracts   
-    let me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/ValidatorSetRelayed.json', 'utf-8');
+    let me = fs.readFileSync('./node_modules/ewc-system-contracts/build/contracts/ValidatorSetRelayed.json', 'utf-8');
     RelayedContractABI = JSON.parse(me);
-    me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/ValidatorSetRelay.json', 'utf-8');
+    me = fs.readFileSync('./node_modules/ewc-system-contracts/build/contracts/ValidatorSetRelay.json', 'utf-8');
     RelayContractABI = JSON.parse(me);
     me = fs.readFileSync('./node_modules/multisig-wallet-gnosis/build/contracts/MultiSigWallet.json', 'utf-8');
     MultiSigABI = JSON.parse(me);

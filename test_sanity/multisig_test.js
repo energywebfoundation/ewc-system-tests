@@ -9,10 +9,11 @@ const csv = require('csv-parser')
 
 // parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
-const VALUES = "./node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json"
 var values = {};
 const results = [];
 var accounts;
+
+const {ChainspecValues, MultiSigWalletJSON, } = require(__dirname + "/utils.js");
 
 // tests
 describe(' Contracts', function() {
@@ -24,13 +25,11 @@ describe(' Contracts', function() {
     web3.eth.transactionConfirmationBlocks = 1;
 
     // retrieves the hardcoded values
-    let jso = fs.readFileSync(VALUES, 'utf-8');
-    values = JSON.parse(jso);
+    values = ChainspecValues;
     accounts = values.address_book["INITAL_VALIDATORS"];
 
     // gets the ABI of all contracts    
-    me = fs.readFileSync('./node_modules/multisig-wallet-gnosis/build/contracts/MultiSigWallet.json', 'utf-8');
-    MultiSigABI = JSON.parse(me);
+    MultiSigABI = MultiSigWalletJSON;
     utils.addTestWallets(web3);
   }
 

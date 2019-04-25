@@ -113,6 +113,22 @@ const BlockRewardJSON = JSON.parse(
   fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/BlockReward.json")
 );
 
+const HoldingJSON = JSON.parse(
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/Holding.json")
+);
+
+const NodeControlSimpleJSON = JSON.parse(
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/NodeControlSimple.json")
+);
+
+const NodeControlLookUpJSON = JSON.parse(
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/NodeControlLookUp.json")
+);
+
+const NodeControlDbJSON = JSON.parse(
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/NodeControlDb.json")
+);
+
 const TestSCurveProvder = require("./blockreward_function");
 
 const testValidators = [
@@ -151,6 +167,10 @@ module.exports = {
   RelayedJSON,
   RelayJSON,
   BlockRewardJSON,
+  HoldingJSON,
+  NodeControlSimpleJSON,
+  NodeControlLookUpJSON,
+  NodeControlDbJSON,
   initialValidators,
   testValidators,
   testPayoutAddresses,

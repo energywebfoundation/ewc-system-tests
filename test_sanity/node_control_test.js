@@ -1,9 +1,7 @@
 // checks that system contracts are configured as expected
 const Web3 = require('web3');
 const fs = require('fs');
-var assert = require('assert');
-var http = require('http');
-var async = require('async');
+const assert = require('assert');
 const utils = require('./utils')
 
 // parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
@@ -16,14 +14,11 @@ var accounts;
 // tests
 describe(' Contracts', function() {
 
-  var relayed;
   var nodeControlLookUp;
   var nodeControlSimple;
-  var ndoeControlDb;
   var NodeControlLookUpABI;
   var NodeControlSimpleABI;
   var NodeControlDbABI;
-  let RelayContractABI;
 
   async function initEverything(done) {
     // ensures that web3 is connected
@@ -136,7 +131,7 @@ describe(' Contracts', function() {
         value: '0',
         data: nodeControlSimple.methods.updateValidator(ADDRESSES[0].address, "0xe0d81206592a85a612a3bdb4300f538f67f9229ef7ae0fc0c1a098eefa467727", "parity/parity:v2.3.3", "0xfda42852939fef61daccd00d20ef07e2316de2e023de48c861701bfa73cfca47", "https://raw.githubusercontent.com/energywebfoundation/ewf-chainspec/99fa89b92b35219ddf38c886a75623c85bc9c696/Volta.json", true).encodeABI()
       }
-      const receipt = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["NODECONTROL_SIMPLE"]);
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["NODECONTROL_SIMPLE"]);
 
       var eState = await nodeControlSimple.methods.retrieveExpectedState(ADDRESSES[0].address).call();
       eState.dockerSha.should.be.equal("0xe0d81206592a85a612a3bdb4300f538f67f9229ef7ae0fc0c1a098eefa467727");
@@ -192,12 +187,12 @@ describe(' Contracts', function() {
     })
 
     //revert the state
-    it("should prep the state for further tests", async function() {
+    after("should prep the state for further tests", async function() {
       const txA = {
         value: '0',
         data: nodeControlSimple.methods.updateValidator(ADDRESSES[0].address, "0xe0d81206592a85a612a3bdb4300f538f67f9229ef7ae0fc0c1a098eefa467720", "parity/parity:v2.3.0", "0xfda42852939fef61daccd00d20ef07e2316de2e023de48c861701bfa73cfca40", "https://raw.githubusercontent.com/energywebfoundation/ewf-chainspec/99fa89b92b35219ddf38c886a75623c85bc9c696/Volta.jso0", false).encodeABI()
       }
-      const receipt = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["NODECONTROL_SIMPLE"]);
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["NODECONTROL_SIMPLE"]);
     })
 
   });

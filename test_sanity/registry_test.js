@@ -19,7 +19,6 @@ var accounts;
 // tests
 describe(' Contracts', function() {
 
-  let registry;
   let RegistryABI;
 
   async function initEverything(done) {
@@ -297,7 +296,7 @@ describe(' Contracts', function() {
         value: '0',
         data: simpleReg.methods.removeReverse().encodeABI()
       };
-      res = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
     })
 
     it("should drain properly", async () => {

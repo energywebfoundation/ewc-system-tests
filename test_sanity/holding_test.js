@@ -1,9 +1,7 @@
 // checks that system contracts are configured as expected
 const Web3 = require('web3');
 const fs = require('fs');
-var assert = require('assert');
-var http = require('http');
-var async = require('async');
+const assert = require('assert');
 const utils = require('./utils')
 const csv = require('csv-parser')
 
@@ -12,7 +10,6 @@ var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'))
 const VALUES = "./node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json"
 var values = {};
 const results = [];
-var accounts;
 
 // tests
 describe(' Contracts', function() {
@@ -62,8 +59,8 @@ describe(' Contracts', function() {
       });
 
       for (i = 0; i < result.length; i++) {
-        struct = await holding.methods.holders(result[i].address).call()
-        assert.equal(result[i].amount, web3.utils.fromWei(struct.availableAmount.toString()))
+        holders = await holding.methods.holders(result[i].address).call()
+        assert.equal(result[i].amount, web3.utils.fromWei(holders.availableAmount.toString()))
       }
 
     })

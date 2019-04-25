@@ -13,7 +13,7 @@ const results = [];
 const {ChainspecValues, MultiSigWalletJSON, HoldingJSON} = require(__dirname + "/utils.js");
 
 // tests
-describe(' Contracts', function() {
+describe('Holding', function() {
 
   let holding;
   let HoldingABI;
@@ -29,7 +29,7 @@ describe(' Contracts', function() {
     accounts = values.address_book["INITAL_VALIDATORS"];
 
     // gets the ABI of all contracts    
-    HoldingABI = HoldingJson;
+    HoldingABI = HoldingJSON;
     MultiSigABI = MultiSigWalletJSON;
     utils.addTestWallets(web3);
   }

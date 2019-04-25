@@ -13,7 +13,7 @@ var accounts;
 const {ChainspecValues, MultiSigWalletJSON, NodeControlLookUpJSON, NodeControlSimpleJSON, NodeControlDbJSON} = require(__dirname + "/utils.js");
 
 // tests
-describe(' Contracts', function() {
+describe('NodeControl', function() {
 
   var nodeControlLookUp;
   var nodeControlSimple;

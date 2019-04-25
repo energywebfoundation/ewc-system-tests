@@ -11,13 +11,14 @@ const randomName = randomHex(32);
 var name = "hallo1" + Math.random(1000000)
 // parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
-const VALUES = "./node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json"
 const ADDRESSES = JSON.parse(fs.readFileSync("./accounts/testaccounts.json", "utf-8"));
 var values = {};
 var accounts;
 
+const {ChainspecValues, MultiSigWalletJSON, RegistryJSON} = require(__dirname + "/utils.js");
+
 // tests
-describe(' Contracts', function() {
+describe('Registry', function() {
 
   let RegistryABI;
 
@@ -28,15 +29,12 @@ describe(' Contracts', function() {
     web3.eth.transactionConfirmationBlocks = 1;
 
     // retrieves the hardcoded values
-    let jso = fs.readFileSync(VALUES, 'utf-8');
-    values = JSON.parse(jso);
+    values = ChainspecValues;
     accounts = values.address_book["INITAL_VALIDATORS"];
 
     // gets the ABI of all contracts    
-    me = fs.readFileSync('./node_modules/genome-system-contracts/build/contracts/SimpleRegistry.json', 'utf-8');
-    RegistryABI = JSON.parse(me);
-    me = fs.readFileSync('./node_modules/multisig-wallet-gnosis/build/contracts/MultiSigWallet.json', 'utf-8');
-    MultiSigABI = JSON.parse(me);
+    RegistryABI = RegistryJSON;
+    MultiSigABI = MultiSigWalletJSON;
     utils.addTestWallets(web3);
   }
 
@@ -48,7 +46,7 @@ describe(' Contracts', function() {
     simpleReg = new web3.eth.Contract(RegistryABI.abi, values.address_book["REGISTRY"]);
   });
 
-  describe('Registry', function() {
+  describe.skip('Registry', function() {
     this.timeout(120000);
 
     it("should have the owner set correctly", async () => {
@@ -297,6 +295,8 @@ describe(' Contracts', function() {
         data: simpleReg.methods.removeReverse().encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["REGISTRY"]);
+      res2 = await simpleReg.methods.reverse(values.address_book["REGISTRY"]).call()
+      assert.equal(res2, "")
     })
 
     it("should drain properly", async () => {

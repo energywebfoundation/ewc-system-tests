@@ -12,7 +12,7 @@ var values = {};
 const block_number = 0;
 
 // tests
-describe('Contracts', function() {
+describe('Balances', function() {
 
   async function initEverything(done) {
     // ensures that web3 is connected
@@ -24,7 +24,7 @@ describe('Contracts', function() {
 
   }
 
-  before(async function (){
+  before(async function () {
     await initEverything();
   });
 
@@ -57,10 +57,10 @@ describe('Contracts', function() {
     });
 
     it('ValidatorRelayed should be 1 wei', async function() {
-        let deployed = values.address_book['VALIDATOR_RELAYED'];
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
-    });    
+      let deployed = values.address_book['VALIDATOR_RELAYED'];
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+    });
 
   });
 
@@ -73,15 +73,15 @@ describe('Contracts', function() {
     });
 
     it('DB should be 1 wei', async function() {
-        let deployed = values.address_book['NODECONTROL_DB'];
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = values.address_book['NODECONTROL_DB'];
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
     it('Simple should be 1 wei', async function() {
-        let deployed = values.address_book['NODECONTROL_SIMPLE'];
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = values.address_book['NODECONTROL_SIMPLE'];
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
   });
@@ -92,7 +92,7 @@ describe('Contracts', function() {
       let deployed = values.address_book['REWARD'];
       let hardcoded = "1";
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
-    }); 
+    });
 
   });
 
@@ -102,7 +102,7 @@ describe('Contracts', function() {
       let deployed = values.address_book['REGISTRY'];
       let hardcoded = "1";
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
-    }); 
+    });
 
   });
 
@@ -115,10 +115,10 @@ describe('Contracts', function() {
     });
 
     it('NetOps should be 0 wei', async function() {
-        let deployed = values.address_book['VALIDATOR_NETOPS'];
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
-    });    
+      let deployed = values.address_book['VALIDATOR_NETOPS'];
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+    });
 
     it('EWAG should be 8.5 M', async function() {
       let deployed = values.address_book['EWAG'];
@@ -137,45 +137,45 @@ describe('Contracts', function() {
     });
 
     it('sha256 should be 1 wei', async function() {
-        let deployed = "0x0000000000000000000000000000000000000002";
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = "0x0000000000000000000000000000000000000002";
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
     it('ripemd160 should be 1 wei', async function() {
-        let deployed = "0x0000000000000000000000000000000000000003";
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = "0x0000000000000000000000000000000000000003";
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
     it('identity should be 1 wei', async function() {
-        let deployed = "0x0000000000000000000000000000000000000004";
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = "0x0000000000000000000000000000000000000004";
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
     it('modexp should be 1 wei', async function() {
-        let deployed = "0x0000000000000000000000000000000000000005";
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = "0x0000000000000000000000000000000000000005";
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
     it('alt_bn128_add should be 1 wei', async function() {
-        let deployed = "0x0000000000000000000000000000000000000006";
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = "0x0000000000000000000000000000000000000006";
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
     it('alt_bn128_mul should be 1 wei', async function() {
-        let deployed = "0x0000000000000000000000000000000000000007";
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = "0x0000000000000000000000000000000000000007";
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
     it('alt_bn128_pairing should be 1 wei', async function() {
-        let deployed = "0x0000000000000000000000000000000000000008";
-        let hardcoded = "1";
-        (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
+      let deployed = "0x0000000000000000000000000000000000000008";
+      let hardcoded = "1";
+      (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
   });

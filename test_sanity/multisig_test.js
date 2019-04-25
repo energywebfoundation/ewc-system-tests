@@ -16,7 +16,7 @@ var accounts;
 const {ChainspecValues, MultiSigWalletJSON, } = require(__dirname + "/utils.js");
 
 // tests
-describe(' Contracts', function() {
+describe('MultiSig', function() {
 
   async function initEverything(done) {
     // ensures that web3 is connected

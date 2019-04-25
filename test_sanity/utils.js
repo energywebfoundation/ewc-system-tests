@@ -129,6 +129,10 @@ const NodeControlDbJSON = JSON.parse(
   fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/NodeControlDb.json")
 );
 
+const RegistryJSON = JSON.parse(
+  fs.readFileSync(__dirname + "/../node_modules/ewc-system-contracts/build/contracts/SimpleRegistry.json")
+);
+
 const TestSCurveProvder = require("./blockreward_function");
 
 const testValidators = [
@@ -171,6 +175,7 @@ module.exports = {
   NodeControlSimpleJSON,
   NodeControlLookUpJSON,
   NodeControlDbJSON,
+  RegistryJSON,
   initialValidators,
   testValidators,
   testPayoutAddresses,

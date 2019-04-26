@@ -154,12 +154,12 @@ describe('NodeControl', function() {
     it("should not allow anyone other then a validator to confirm its update", async function() {
       try {
         await nodeControlSimple.methods.confirmUpdate().send({
-          from: accounts[1],
-          gasLimit: 50000
+          from: ADDRESSES[1].address,
+          gasLimit: 500000
         })
       } catch (err) {}
 
-      (await nodeControlDb.methods.isUpdateConfirmed(accounts[1]).call()).should.be.equal(false);
+      (await nodeControlDb.methods.isUpdateConfirmed(ADDRESSES[1].address).call()).should.be.equal(false);
     })
 
     it("should allow a validator to confirm an update", async function() {

@@ -46,7 +46,7 @@ describe('Registry', function() {
     simpleReg = new web3.eth.Contract(RegistryABI.abi, values.address_book["REGISTRY"]);
   });
 
-  describe.skip('Registry', function() {
+  describe('Registry', function() {
     this.timeout(120000);
 
     it("should have the owner set correctly", async () => {

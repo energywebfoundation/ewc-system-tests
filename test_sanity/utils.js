@@ -67,6 +67,7 @@ function addTestWallets(web3) {
 }
 
 async function sendMultisigTransaction(web3, multisig, transaction, destination, submitterWalletPosition = 0) {
+<<<<<<< HEAD
   multisig.transactionConfirmationBlocks = 1
 
   const submitter = web3.eth.accounts.wallet.accounts[submitterWalletPosition].address;
@@ -92,6 +93,23 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
     //gas: Math.floor(confirmGas * 5)
     gas: 5000000
   });
+=======
+    multisig.transactionConfirmationBlocks = 1
+
+    const submitter = web3.eth.accounts.wallet.accounts[submitterWalletPosition].address;
+    const confirmer = submitterWalletPosition == 0 ? web3.eth.accounts.wallet.accounts['1'].address : web3.eth.accounts.wallet.accounts['0'].address;
+    
+    const logs = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).send({
+        from: submitter, 
+        gas: 5000000
+    });
+
+    const transactionID = logs.events.Submission.returnValues.transactionId.toString(10);
+    return multisig.methods.confirmTransaction(transactionID).send({
+        from: confirmer,
+        gas: 5000000
+    });
+>>>>>>> master
 }
 
 const ChainspecValues = JSON.parse(

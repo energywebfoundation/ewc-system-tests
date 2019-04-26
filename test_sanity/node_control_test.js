@@ -237,7 +237,7 @@ describe('NodeControl', function() {
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["NODECONTROL_DB"]);
 
 
-      (await nodeControlDb.methods.nodeControlLookUp().call()).should.be.equal(ADDRESSES[0].address);
+      (await nodeControlDb.methods.nodeControlLookUp().call()).toLowerCase().should.be.equal(ADDRESSES[0].address.toLowerCase());
 
       const txB = {
         value: '0',

@@ -108,7 +108,7 @@ describe('Registry', function() {
       txReturn = await simpleReg.methods.owner().call()
       assert.equal(txReturn, ADDRESSES[1].address)
       await simpleReg.methods.transferOwnership(values.address_book["VALIDATOR_NETOPS"]).send({
-        gasLimit: 50000,
+        gasLimit: 500000,
         from: ADDRESSES[1].address
       })
 
@@ -332,7 +332,7 @@ describe('Registry', function() {
 
       await simpleReg.methods.transfer(randomName, values.address_book["VALIDATOR_NETOPS"]).send({
         from: ADDRESSES[1].address,
-        gasLimit: 50000
+        gasLimit: 500000
       });
       //check if it worked
       res = await simpleReg.methods.entries(randomName).call();

@@ -109,7 +109,7 @@ describe('NodeControl', function() {
       try {
         await nodeControlSimple.methods.updateValidator(ADDRESSES[0].address, "0xe", "parity", "0xf", "https://raw.githubusercontent.com/Volta.json", true).send({
           from: ADDRESSES[1].address,
-          gasLimit: 50000
+          gasLimit: 500000
         });
       } catch (err) {}
 
@@ -252,7 +252,7 @@ describe('NodeControl', function() {
       try {
         await nodeControlDb.methods.setState(ADDRESSES[0].address, "0xe0d81206592a85a612a3bdb4300f538f67f9229ef7ae0fc0c1a098eefa467721", "parity/parity:v2.3.1", "0xfda42852939fef61daccd00d20ef07e2316de2e023de48c861701bfa73cfca41", "https://raw.githubusercontent.com/energywebfoundation/ewf-chainspec/99fa89b92b35219ddf38c886a75623c85bc9c696/Volta.json", true).send({
           from: ADDRESSES[0].address,
-          gasLimit: 50000
+          gasLimit: 500000
         });
         assert(false)
       } catch (err) {
@@ -264,7 +264,7 @@ describe('NodeControl', function() {
       try {
         await nodeControlDb.methods.setUpdateConfirmed("0x0000000000000000000000000000000000000001").send({
           from: ADDRESSES[0].address,
-          gasLimit: 50000
+          gasLimit: 500000
         });
         assert(false)
       } catch (err) {

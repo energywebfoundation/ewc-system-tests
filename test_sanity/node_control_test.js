@@ -238,7 +238,7 @@ describe('NodeControl', function() {
 
 
       (await nodeControlDb.methods.nodeControlLookUp().call()).should.be.equal(ADDRESSES[0].address);
-      ///@dev change to multisig here!!
+
       const txB = {
         value: '0',
         data: nodeControlDb.methods.changeLookUpContract(values.address_book["NODECONTROL_LOOKUP"]).encodeABI()

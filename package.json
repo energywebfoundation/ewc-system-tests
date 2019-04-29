@@ -15,10 +15,12 @@
     "bn.js": "^4.11.8",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "csv-parser": "^2.2.0",
     "ewf-genesis-generator": "git+ssh://git@github.com/energywebfoundation/ewf-genesis-generator.git",
     "ewc-system-contracts": "git+ssh://git@github.com/energywebfoundation/ewc-system-contracts.git#v0.0.0",
     "mocha": "^6.0.2",
     "multisig-wallet-gnosis": "git+ssh://git@github.com/energywebfoundation/MultiSigWallet.git",
+    "randomhex": "^0.1.5",
     "update": "^0.7.4",
     "web3": "1.0.0-beta.52"
   }

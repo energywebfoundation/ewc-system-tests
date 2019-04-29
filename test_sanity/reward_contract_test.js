@@ -210,7 +210,6 @@ describe("Reward contract", function () {
                 newAmount = await rewardContract.methods.mintedForAccount(cFund).call();
             }
             let diff = newNum - currentNum;
-            console.log(diff)
             newAmount.toString(10).should.be.equal(
                 new BN(currentAmount.toString(10)).add((new BN(ChainspecValues["balances"]["COMMUNITY_REWARD"])).muln(diff)).toString(10)
             );
@@ -247,7 +246,6 @@ describe("Reward contract", function () {
                 newAmount = await rewardContract.methods.mintedForAccount(accounts[1]).call();
             }
             let diff = newNum - currentNum;
-            console.log(diff)
             newAmount.toString(10).should.be.equal(
                 new BN(currentAmount.toString(10)).add((new BN(ChainspecValues["balances"]["COMMUNITY_REWARD"])).muln(diff)).toString(10)
             );

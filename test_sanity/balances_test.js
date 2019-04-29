@@ -50,7 +50,6 @@ describe('Contracts', function() {
       
       for (let i = 0; i < values.address_book['IGNITOR_MEMBERS'].length; i++) {
         sum += parseInt(await web3.eth.getBalance(values.address_book['IGNITOR_MEMBERS'][i], block_number));
-        console.log(sum);
       }
       sum.should.be.equal(hardcoded);
     });

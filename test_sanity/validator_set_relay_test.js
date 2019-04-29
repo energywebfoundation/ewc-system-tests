@@ -330,22 +330,3 @@ describe('ValidatorSetRELAY contract', function () {
     });
     
 });
-
-async function callBackWithEvent(_bHash, _vals, options) {
-    const _result = await relayed.triggerRelayCallbackWithEvent(_bHash, _vals, options).should.be.fulfilled;
-    _result.logs[0].event.should.be.equal("CallbackSuccess");
-    return _result;
-}
-
-async function forFinalization() {
-    let finalized = false;
-    while (!finalized) {
-        await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve();
-            }, 5000);
-        });
-        finalized = await relayed.methods.finalized().call();
-        console.log(finalized)
-    }
-}

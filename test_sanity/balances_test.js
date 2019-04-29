@@ -5,7 +5,8 @@ var assert = require('assert');
 var http = require('http');
 var async = require('async');
 
-var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
+//var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
+var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 const VALUES = "./node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json"
 var values = {};
 
@@ -41,6 +42,7 @@ describe('Balances', function() {
   describe('Balance of Ignitor', function() {
 
     it('should be 1 token (1000000000000000000 wei)', async function() {
+      console.log(values.address_book)
       let deployed = values.address_book['IGNITOR'];
       let hardcoded = values.balances['IGNITOR'];
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);

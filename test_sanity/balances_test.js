@@ -5,6 +5,7 @@ var assert = require('assert');
 var http = require('http');
 var async = require('async');
 
+//var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 const VALUES = "./node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json"
 var values = {};
@@ -49,7 +50,6 @@ describe('Contracts', function() {
       
       for (let i = 0; i < values.address_book['IGNITOR_MEMBERS'].length; i++) {
         sum += parseInt(await web3.eth.getBalance(values.address_book['IGNITOR_MEMBERS'][i], block_number));
-        console.log(sum);
       }
       sum.should.be.equal(hardcoded);
     });

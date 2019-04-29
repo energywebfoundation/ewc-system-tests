@@ -143,7 +143,7 @@ describe('ValidatorSetRelayed', function() {
         data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAYED"]);
-      (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getPendingValidators().call())
+      (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getMigrationValidators().call())
 
       await utils.waitForSomething([
         {
@@ -156,14 +156,14 @@ describe('ValidatorSetRelayed', function() {
         }
       ]);
 
-      (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
+      (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getMigrationValidators().call())
 
       const txB = {
         value: '0',
         data: relayed.methods.removeValidator(utils.testValidators[0]).encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, values.address_book["VALIDATOR_RELAYED"]);
-      (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getPendingValidators().call())
+      (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getMigrationValidators().call())
 
       await utils.waitForSomething([
         {
@@ -176,7 +176,7 @@ describe('ValidatorSetRelayed', function() {
         }
       ]);
 
-      (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
+      (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getMigrationValidators().call())
     });
   });
 
@@ -267,7 +267,7 @@ describe('ValidatorSetRelayed', function() {
         data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAYED"]);
-      const pendingValidators = await relayed.methods.getPendingValidators().call()
+      const pendingValidators = await relayed.methods.getMigrationValidators().call()
       pendingValidators['3'].toLowerCase().should.be.equal(utils.testValidators[0].toLowerCase())
 
       await utils.waitForSomething([
@@ -468,7 +468,7 @@ describe('ValidatorSetRelayed', function() {
         data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
       };
       await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAYED"]);
-      let pendingValidators = await relayed.methods.getPendingValidators().call()
+      let pendingValidators = await relayed.methods.getMigrationValidators().call()
       pendingValidators['3'].toLowerCase().should.be.equal(utils.testValidators[0].toLowerCase())
       pendingValidators.length.should.be.equal(4);
 
@@ -500,7 +500,7 @@ describe('ValidatorSetRelayed', function() {
         }
       ]);
 
-      pendingValidators = await relayed.methods.getPendingValidators().call()
+      pendingValidators = await relayed.methods.getMigrationValidators().call()
       pendingValidators.length.should.be.equal(3);
     });
 
@@ -774,5 +774,42 @@ describe('ValidatorSetRelayed', function() {
       receipt.events.ExecutionFailure.should.not.be.undefined;
     });
   });
+
+  describe('Block generation test', async function () {
+    this.timeout(300000);
+
+    it('Added validator should generate blocks', async function () {
+
+        const txA = { 
+            value: '0', 
+            data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
+        };
+        const receipt = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, values.address_book["VALIDATOR_RELAYED"] );
+        
+        await utils.waitForSomething([
+          {execute: relayed.methods.isActiveValidator(utils.testValidators[0]).call, waitUntil: true},
+          {execute: relayed.methods.finalized().call, waitUntil: true}
+        ]);
+
+        await utils.sleep(60000);
+
+        const txB = { 
+            value: '0', 
+            data: relayed.methods.removeValidator(utils.testValidators[0]).encodeABI()
+        };
+        const receiptB = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, values.address_book["VALIDATOR_RELAYED"] );
+        await utils.waitForSomething([
+          {execute: relayed.methods.isActiveValidator(utils.testValidators[0]).call, waitUntil: false},
+          {execute: relayed.methods.finalized().call, waitUntil: true}
+        ]);
+        const blocks = []
+        for (let i = receipt.blockNumber; i < receiptB.blockNumber; i++) {
+          blocks.push(await web3.eth.getBlock(i))
+        }
+
+        blocks.find(block => block.author === utils.testValidators[0]).should.not.be.undefined;   
+
+    });
+  }); 
 
 });

@@ -88,7 +88,7 @@ describe('ValidatorSetRELAY contract', function () {
         });
 
         it('should allow only the owner to set relayed address', async function () {
-            await expect(relay.methods.setRelayed(web3.eth.accounts.wallet.accounts['2'].address).send({ from: web3.eth.accounts.wallet.accounts['2'].address, gas: standardGas }))
+            await expect(relay.methods.setRelayed(web3.eth.accounts.wallet.accounts['0'].address).send({ from: web3.eth.accounts.wallet.accounts['1'].address, gas: standardGas }))
                 .to.be.rejectedWith(REVERT_ERROR_MSG);
             
             await sendMultisigTransaction(
@@ -199,74 +199,6 @@ describe('ValidatorSetRELAY contract', function () {
         });
     });
 
-    describe("#setSystem", async function () {
-
-        beforeEach(async function () {
-            (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(SYSTEM_ADDRESS);
-        });
-
-        afterEach(async function () {
-            (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(SYSTEM_ADDRESS);
-        });
-
-        it('should allow only the owner to set system address', async function () {
-            await expect(relay.methods.setSystem( web3.eth.accounts.wallet.accounts['2'].address).send({ from: web3.eth.accounts.wallet.accounts['2'].address, gas: standardGas }))
-                .to.be.rejectedWith(REVERT_ERROR_MSG);
-        
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(web3.eth.accounts.wallet.accounts['2'].address).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-
-            (await relay.methods.SYSTEM_ADDRESS().call()).should.be.equal(web3.eth.accounts.wallet.accounts['2'].address);
-
-            await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(SYSTEM_ADDRESS).encodeABI()
-                },
-                relay.address,
-                1
-            ).should.be.fulfilled;
-        });
-
-        it('should not allow to set the system address to 0x0', async function () {
-            const logs = await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(DEFAULT_ADDRESS).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-            should.exist(logs.events['ExecutionFailure']);
-        });
-
-        it('should not allow to set the system address to the already existing one', async function () {
-            const logs = await sendMultisigTransaction(
-                web3,
-                netOpsMultiSig,
-                {
-                    value: 0,
-                    data: relay.methods.setSystem(SYSTEM_ADDRESS).encodeABI()
-                },
-                relay.address,
-                0
-            ).should.be.fulfilled;
-            should.exist(logs.events['ExecutionFailure']);
-        });
-    });
-
     describe("#getValidators", async function () {
 
         this.timeout(600000);
@@ -319,28 +251,28 @@ describe('ValidatorSetRELAY contract', function () {
               data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
           };
           await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, ChainspecValues.address_book["VALIDATOR_RELAYED"] );
-          (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getPendingValidators().call())
+          (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getMigrationValidators().call())
          
           await utils.waitForSomething([
             {execute: relayed.methods.isActiveValidator(utils.testValidators[0]).call, waitUntil: true },
             {execute: relayed.methods.finalized().call, waitUntil: true}
           ]);
           
-          (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
+          (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getMigrationValidators().call())
     
           const txB = { 
               value: '0', 
               data: relayed.methods.removeValidator(utils.testValidators[0]).encodeABI()
           };
           await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, ChainspecValues.address_book["VALIDATOR_RELAYED"] );
-          (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getPendingValidators().call())
+          (await relayed.methods.getValidators().call()).should.not.be.deep.equal(await relayed.methods.getMigrationValidators().call())
           
           await utils.waitForSomething([
             {execute: relayed.methods.isPendingToBeRemoved(utils.testValidators[0]).call, waitUntil: false },
             {execute: relayed.methods.finalized().call, waitUntil: true}
           ]);
           
-          (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getPendingValidators().call())
+          (await relayed.methods.getValidators().call()).should.be.deep.equal(await relayed.methods.getMigrationValidators().call())
         });
     });
 
@@ -398,22 +330,3 @@ describe('ValidatorSetRELAY contract', function () {
     });
     
 });
-
-async function callBackWithEvent(_bHash, _vals, options) {
-    const _result = await relayed.triggerRelayCallbackWithEvent(_bHash, _vals, options).should.be.fulfilled;
-    _result.logs[0].event.should.be.equal("CallbackSuccess");
-    return _result;
-}
-
-async function forFinalization() {
-    let finalized = false;
-    while (!finalized) {
-        await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve();
-            }, 5000);
-        });
-        finalized = await relayed.methods.finalized().call();
-        console.log(finalized)
-    }
-}

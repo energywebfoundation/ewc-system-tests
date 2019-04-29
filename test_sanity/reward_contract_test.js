@@ -20,7 +20,8 @@ const {
 } = require(__dirname + "/utils.js");
 
 const Web3 = require('web3');
-const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
+//const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
+var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 
 addTestWallets(web3);
 
@@ -209,7 +210,6 @@ describe("Reward contract", function () {
                 newAmount = await rewardContract.methods.mintedForAccount(cFund).call();
             }
             let diff = newNum - currentNum;
-            console.log(diff)
             newAmount.toString(10).should.be.equal(
                 new BN(currentAmount.toString(10)).add((new BN(ChainspecValues["balances"]["COMMUNITY_REWARD"])).muln(diff)).toString(10)
             );
@@ -246,7 +246,6 @@ describe("Reward contract", function () {
                 newAmount = await rewardContract.methods.mintedForAccount(accounts[1]).call();
             }
             let diff = newNum - currentNum;
-            console.log(diff)
             newAmount.toString(10).should.be.equal(
                 new BN(currentAmount.toString(10)).add((new BN(ChainspecValues["balances"]["COMMUNITY_REWARD"])).muln(diff)).toString(10)
             );

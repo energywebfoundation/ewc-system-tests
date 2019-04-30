@@ -1,6 +1,4 @@
-# ewc-system-tests
-Integration and system tests of EWC.
-
+# EWC and Volta system level tests
 Based on web3.js, web3.py and Parity Ethereum.
 
 ## Maintainers
@@ -17,13 +15,24 @@ Adam Nagy (@ngyam), Heiko Burkhardt (@hai-ko), Jonas Bentke (@jbentke)
 ### 1. NPM Scripts
 ```
 npm install
+```
+This pulls some dependency repos, such as the [contracts repo](https://github.com/energywebfoundation/ewc-system-contracts) and the [chainspec generator](https://github.com/energywebfoundation/ewf-genesis-generator).
+```
 npm run compile
 ```
+This compiles the contracts with a local truffle in order to obtain their ABI.
+
 ### 2. Test Accounts
 
-Use the following templeate file to paste your private keys and place it at `accounts/testaccounts.json`.
-This file must not be commited. The first two addresses need to be added to the VALIDATOR_NETOPS and COMMUNITY_FUND multisig contract. These accounts also need to be funded before the tests can be executed.
+Since these tests run on a live chain, some unlocked accounts with ethers are needed for testing.
 
+The tests expect the test accounts to be in the `accounts/testaccounts.json` file. Use the template snippet below to paste your private keys and place it there.
+**Important:**
+ - This file must not be commited.
+ - The first two addresses must be `VALIDATOR_NETOPS` and `COMMUNITY_FUND` multisig contract owners. These accounts also need to be funded before the tests can be executed.
+ - This means that the `VALIDATOR_NETOPS` and `COMMUNITY_FUND` multisig must to have a confirmation threshold of 2 to run the tests successfully.
+
+`accounts/testaccounts.json` template:
 ```
 [
     {
@@ -48,16 +57,18 @@ parity --chain ./volta.json --jsonrpc-apis all --unsafe-expose --pruning=archive
 ```
 
 ## Test Execution
-To run the tests execute:
+To run the tests, execute:
 ```
 npm test
 ```
+
+
 **Important**: Do not stop the tests before they are completed. Stopping the tests may lead to an unclean state which needs to be cleand manually.
 
 ## Guidelines
- - **Scripts**: the folder "utils" contains useful Python scripts
+ - **Scripts**: the folder [utils](./utils) contains useful Python scripts
  - **Sanity (integration) tests**: Mocha tests (inspired by the unit tests)
- - **Security tests**
+ - **Security tests**: Mocha tests
 
 ## Contributing
 
@@ -70,3 +81,5 @@ We use [SemVer](http://semver.org/) for versioning.
 ## License
 
 This project is licensed under the GPLv3 License - see the [LICENSE](./LICENSE) file for details.
+
+## FAQ

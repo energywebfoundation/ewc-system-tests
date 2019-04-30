@@ -29,8 +29,10 @@ Since these tests run on a live chain, some unlocked accounts with ethers are ne
 The tests expect the test accounts to be in the `accounts/testaccounts.json` file. Use the template snippet below to paste your private keys and place it there.
 **Important:**
  - This file must not be commited.
+ - You need to add at least 3 addresses.
  - The first two addresses must be `VALIDATOR_NETOPS` and `COMMUNITY_FUND` multisig contract owners. These accounts also need to be funded before the tests can be executed.
  - This means that the `VALIDATOR_NETOPS` and `COMMUNITY_FUND` multisig must to have a confirmation threshold of 2 to run the tests successfully.
+ - The third address can be an address of your choosing.
 
 `accounts/testaccounts.json` template:
 ```
@@ -51,17 +53,17 @@ The tests expect the test accounts to be in the `accounts/testaccounts.json` fil
 ```
 
 ### 3. Run Local Client 
-Download the [chain spec file](https://github.com/energywebfoundation/ewf-chainspec/blob/master/Volta.json) and run:
+Download an EWF chain spec file, e.g. for [Volta](https://github.com/energywebfoundation/ewf-chainspec/blob/master/Volta.json) and run:
 ```
-parity --chain ./volta.json --jsonrpc-apis all --unsafe-expose --pruning=archive
+parity --chain ./Volta.json --jsonrpc-apis=all --jsonrpc-cors=all --ipc-apis=all --ws-apis=all --ws-origins=all --no-persistent-txqueue --no-warp --pruning=archive
 ```
+**Important**: leave the rpc and ws interfaces at their default setting: `local`. The default ports 8545 for rpc and 8546 for ws are used by the tests.
 
 ## Test Execution
 To run the tests, execute:
 ```
 npm test
 ```
-
 
 **Important**: Do not stop the tests before they are completed. Stopping the tests may lead to an unclean state which needs to be cleand manually.
 

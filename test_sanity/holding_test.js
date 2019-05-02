@@ -58,7 +58,7 @@ describe('Holding', function() {
 
       for (i = 0; i < result.length; i++) {
         holders = await holding.methods.holders(result[i].address).call()
-        assert.equal(result[i].amount, web3.utils.fromWei(holders.availableAmount.toString()))
+        assert.equal(result[i].amount,holders.availableAmount.toString())
       }
 
     })

@@ -5,7 +5,7 @@
   "main": "main.js",
   "private": true,
   "scripts": {
-    "test:execute": "./node_modules/mocha/bin/mocha --exit -r chai/register-assert -r chai/register-expect -r chai/register-should test_*/**/*test.js",
+    "test:execute": "./node_modules/mocha/bin/mocha --exit -r chai/register-assert -r chai/register-expect -r chai/register-should test_*/**/*_test.js",
     "compile": "cd ./node_modules/ewc-system-contracts/ && npx truffle compile && cd .. && cd ./multisig-wallet-gnosis && npx truffle compile",
     "update": "npm i ewc-system-contracts && npm i ewf-genesis-generator && npm i multisig-wallet-gnosis && npm run compile",
     "test": "npm run test:execute"
@@ -16,8 +16,8 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "csv-parser": "^2.2.0",
+    "ewc-system-contracts": "git+ssh://git@github.com/energywebfoundation/ewc-system-contracts.git#v1.0.1",
     "ewf-genesis-generator": "git+ssh://git@github.com/energywebfoundation/ewf-genesis-generator.git",
-    "ewc-system-contracts": "git+ssh://git@github.com/energywebfoundation/ewc-system-contracts.git#v0.0.0",
     "mocha": "^6.0.2",
     "multisig-wallet-gnosis": "git+ssh://git@github.com/energywebfoundation/MultiSigWallet.git",
     "randomhex": "^0.1.5",

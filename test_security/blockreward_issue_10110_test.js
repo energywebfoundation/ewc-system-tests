@@ -15,7 +15,7 @@ const {
 } = require(__dirname + "/../test_sanity/utils.js");
 
 const Web3 = require('web3');
-const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
+const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 
 addTestWallets(web3);
 

@@ -9,7 +9,6 @@ Adam Nagy (@ngyam), Heiko Burkhardt (@hai-ko), Jonas Bentke (@jbentke)
 ## Pre-requisites
 - node 8
 - npm
-- Optional: python 3.6 environment for the python scripts
 
 ## Installation
 ### 1. NPM Scripts

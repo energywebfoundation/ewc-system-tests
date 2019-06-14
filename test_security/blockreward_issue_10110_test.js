@@ -100,7 +100,6 @@ describe("Reward contract", function () {
                 .should.be.equal(calculatedReward.add(new BN((await web3.eth.getBalance(receiver, bnum-1)).toString(10))).toString(10));
         }
     });
-
 });
 
 function randomIntInc(low, high) {

@@ -6,7 +6,8 @@ async function sendMultisigTransactionGeneral(web3, multisig, transaction, desti
 
     let logs = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).send({
         from: submitter,
-        gas: 3900000
+        gas: 3900000,
+        gasPrice: 2
     });
 
     const transactionID = logs.events.Submission.returnValues.transactionId.toString(10);
@@ -20,7 +21,8 @@ async function sendMultisigTransactionGeneral(web3, multisig, transaction, desti
         if (accounts[i] !== submitter) {
             logs = await multisig.methods.confirmTransaction(transactionID).send({
                 from: accounts[i],
-                gas: 3900000
+                gas: 3900000,
+                gasPrice: 2
             });
             confirmed += 1;
             if (confirmed == required - 1) {

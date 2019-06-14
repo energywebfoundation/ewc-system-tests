@@ -55,10 +55,9 @@ describe('MultiSig', function() {
       });
 
       const ownerArray = await netOpsMultiSig.methods.getOwners().call()
-
       for (i = 0; i < result.length; i++) {
-        assert(ownerArray.includes(result[i].address))
+        assert(ownerArray.includes(web3.utils.toChecksumAddress(result[i].address)))
       }
-    })
+    });
   });
 });

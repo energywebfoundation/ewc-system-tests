@@ -7,7 +7,7 @@ var async = require('async');
 
 //var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
-const VALUES = "./node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json"
+const VALUES = "./node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_ewc.json"
 var values = {};
 
 const block_number = 0;
@@ -15,7 +15,7 @@ const block_number = 0;
 // tests
 describe('Contracts', function() {
 
-  this.timeout(60000);
+  this.timeout(120000);
 
   async function initEverything(done) {
     // ensures that web3 is connected
@@ -33,27 +33,25 @@ describe('Contracts', function() {
 
   describe('Balance of Holding contract', function() {
 
-    it('should be 4.07895E+25 wei', async function() {
+    it('should be the appropriate initial amount', async function() {
       let deployedHolding = values.address_book['VESTING'];
       let hardcodedHolding = values.balances['TARGET_AMOUNT'];
       (await web3.eth.getBalance(deployedHolding, block_number)).should.be.equal(hardcodedHolding);
     });
-
   });
 
   describe('Total balance of Ignitor accounts', function() {
 
-    it('should sum to 1 token', async function() {
+    it('should sum to <= 0.25 token * each', async function() {
       let sum = 0;
-      let deployed = values.address_book['IGNITOR_MEMBERS'];
-      let hardcoded = 1000000000000000000;
-      
-      for (let i = 0; i < values.address_book['IGNITOR_MEMBERS'].length; i++) {
-        sum += parseInt(await web3.eth.getBalance(values.address_book['IGNITOR_MEMBERS'][i], block_number));
-      }
-      sum.should.be.equal(hardcoded);
-    });
+      let members = values.address_book['IGNITOR_MEMBERS'];
+      let hardcoded = members.length * 250000000000000000;
 
+      for (let i = 0; i < members.length; i++) {
+        sum += parseInt(await web3.eth.getBalance(members[i], block_number));
+      }
+      sum.should.be.lte(hardcoded);
+    });
   });
 
   describe('Balances of Validators contracts', function() {
@@ -69,7 +67,6 @@ describe('Contracts', function() {
         let hardcoded = "0";
         (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });    
-
   });
 
   describe('Balances of NodeControl contracts', function() {
@@ -91,7 +88,6 @@ describe('Contracts', function() {
         let hardcoded = "0";
         (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
-
   });
 
   describe('Balance of Reward contract', function() {
@@ -100,8 +96,7 @@ describe('Contracts', function() {
       let deployed = values.address_book['REWARD'];
       let hardcoded = "0";
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
-    }); 
-
+    });
   });
 
   describe('Balance of Registry contract', function() {
@@ -111,29 +106,27 @@ describe('Contracts', function() {
       let hardcoded = "0";
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     }); 
-
   });
 
   describe('Balances of Multisig contracts', function() {
 
-    it('CommunityFund should be 0 wei', async function() {
+    it('CommunityFund msig should hold 0 wei', async function() {
       let deployed = values.address_book['COMMUNITY_FUND'];
       let hardcoded = "0";
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
 
-    it('NetOps should be 0 wei', async function() {
+    it('NetOps msig should hold 0 wei', async function() {
         let deployed = values.address_book['VALIDATOR_NETOPS'];
         let hardcoded = "0";
         (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });    
 
-    it('EWAG should be 11310499.3 tokens', async function() {
+    it('EWAG msig hold the correct amount of tokens', async function() {
       let deployed = values.address_book['EWAG_MULTISIG'];
       let hardcoded = values.balances['EWAG'];
       (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
-
   });
 
   describe('Balance of precompiled contracts', function() {
@@ -185,7 +178,5 @@ describe('Contracts', function() {
         let hardcoded = "1";
         (await web3.eth.getBalance(deployed, block_number)).should.be.equal(hardcoded);
     });
-
   });
-
 });

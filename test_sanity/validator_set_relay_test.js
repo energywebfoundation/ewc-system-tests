@@ -80,6 +80,17 @@ describe('ValidatorSetRELAY contract', function () {
     describe("#setRelayed", async function () {
 
         beforeEach(async function () {
+            await sendMultisigTransaction(
+                web3,
+                netOpsMultiSig,
+                {
+                    value: 0,
+                    data: relay.methods.setRelayed(relayed.address).encodeABI()
+                },
+                relay.address,
+                0
+            ).should.be.fulfilled;
+
             (await relay.methods.relayedSet().call()).should.be.equal(relayed.address);
         });
 
@@ -206,7 +217,6 @@ describe('ValidatorSetRELAY contract', function () {
         it('should return the correct validators', async function () {
             let currentValidators = await relay.methods.getValidators().call();
             currentValidators.should.have.members(initialValidators);
-
         });
     });
 
@@ -241,7 +251,6 @@ describe('ValidatorSetRELAY contract', function () {
           ]);
     
           (await relayed.methods.finalized().call()).should.be.true;
-          
         });
     
         it('should set currentValidators to pendingValidators after addValidator call', async function () {
@@ -291,7 +300,7 @@ describe('ValidatorSetRELAY contract', function () {
                 utils.testValidators[0].toLowerCase()
             ];
             const txA = { 
-                value: '0', 
+                value: '0',
                 data: relayed.methods.addValidator(utils.testValidators[0]).encodeABI()
             };
             const receipt = await utils.sendMultisigTransaction(web3, netOpsMultiSig, txA, ChainspecValues.address_book["VALIDATOR_RELAYED"] );
@@ -314,8 +323,8 @@ describe('ValidatorSetRELAY contract', function () {
                 {execute: relayed.methods.finalized().call, waitUntil: true}
             ]);
             
-            const txB = { 
-                value: '0', 
+            const txB = {
+                value: '0',
                 data: relayed.methods.removeValidator(utils.testValidators[0]).encodeABI()
             };
             await utils.sendMultisigTransaction(web3, netOpsMultiSig, txB, ChainspecValues.address_book["VALIDATOR_RELAYED"] );

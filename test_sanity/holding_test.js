@@ -2,8 +2,8 @@
 const Web3 = require('web3');
 const fs = require('fs');
 const assert = require('assert');
-const utils = require('./utils')
-const csv = require('csv-parser')
+const utils = require('./utils');
+const csv = require('csv-parser');
 
 // parity --chain "Volta.json" --jsonrpc-port 8540 --ws-port 8450 --jsonrpc-apis "all"
 var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
@@ -52,7 +52,7 @@ describe('Holding', function() {
           .pipe(csv())
           .on('data', (data) => results.push(data))
           .on('end', () => {
-            resolve(results)
+            resolve(results);
           });
       });
 
@@ -60,7 +60,6 @@ describe('Holding', function() {
         holders = await holding.methods.holders(result[i].address).call()
         assert.equal(result[i].amount,holders.availableAmount.toString())
       }
-
     })
   });
 });

@@ -16,7 +16,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "csv-parser": "^2.2.0",
-    "ewc-system-contracts": "git+ssh://git@github.com/energywebfoundation/ewc-system-contracts.git#v1.0.1",
+    "ewc-system-contracts": "git+ssh://git@github.com/energywebfoundation/ewc-system-contracts.git#v1.1.0",
     "ewf-genesis-generator": "git+ssh://git@github.com/energywebfoundation/ewf-genesis-generator.git",
     "mocha": "^6.0.2",
     "multisig-wallet-gnosis": "git+ssh://git@github.com/energywebfoundation/MultiSigWallet.git",

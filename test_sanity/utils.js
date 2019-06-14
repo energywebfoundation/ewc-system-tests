@@ -56,13 +56,7 @@ async function assertThrowsAsync(fn, msg) {
 }
 
 function addTestWallets(web3) {
-
   let accounts = JSON.parse(fs.readFileSync(__dirname + "/../accounts/testaccounts.json"));
-  accounts.push(
-    {
-      "privateKey": "0x989a1e104b66770d8258ba292f92c6cfea9afb348fca919a5f51033444502062",
-      "address": "0x1e490821f6ca7c66aa0a8f880ad460dda90be6bf"
-    })
   accounts.map(acc => web3.eth.accounts.wallet.add(acc.privateKey));
 }
 
@@ -74,6 +68,7 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
 
   const logs = await multisig.methods.submitTransaction(destination, web3.utils.toHex(transaction.value), transaction.data).send({
     from: submitter,
+    gasPrice: 2,
     gas: 5000000
   });
 
@@ -85,7 +80,7 @@ async function sendMultisigTransaction(web3, multisig, transaction, destination,
 }
 
 const ChainspecValues = JSON.parse(
-  fs.readFileSync(__dirname + "/../node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_volta.json")
+  fs.readFileSync(__dirname + "/../node_modules/ewf-genesis-generator/chainspec_skeletons/hardcoded_values_ewc.json")
 );
 
 const MultiSigWalletJSON = JSON.parse(
@@ -126,9 +121,9 @@ const RegistryJSON = JSON.parse(
 const TestSCurveProvder = require("./blockreward_function");
 
 const testValidators = [
-  "0xbcd364b631aeff093c42ebf08bceb5241e624008",
-  "0xecd5f219953003deacfac738d34e843a1bdf7f17",
-  "0x1e4a5b32eef4938a8b46fc4a7824f44b3e5de3ec"
+  "0x9d1eec4e58f8ac87c0bc754fcef45a3de17cb065",
+  "0xd113a1f98585f5090f5129e05ba4cc15e1474e66",
+  "0xf2c44b1a4908c6edb21ee886588c27553564ab42"
 ];
 // validator 1-3 + community
 const testPayoutAddresses = ["0x00371459b526eA286E3e898950cE8F713B540f0B", "0x00d99132c825Ecfd224832EDe811177ad1512610", "0x0019E00282A6C64d0B2a37df7B9c98B298cc605A", "0x000E9A1A767eA9B3A092ED49c45Eb7f8e318BD39"];

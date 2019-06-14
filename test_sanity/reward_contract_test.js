@@ -21,13 +21,14 @@ const {
 
 const Web3 = require('web3');
 //const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://18.130.251.19:8546'));
-var web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
+//let web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+let web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 
 addTestWallets(web3);
 
 describe("Reward contract", function () {
 
-    this.timeout(150000);
+    this.timeout(120000);
 
     let owner;
     let rewardContract;
@@ -59,16 +60,27 @@ describe("Reward contract", function () {
 
     describe("#setCommunityFund", function () {
 
+        async function setBackCommunityAddress() {
+            let oldCfund = await rewardContract.methods.communityFund.call();
+            if (oldCfund !== comFundMultiSig.address) {
+                await expect(rewardContract.methods.setCommunityFund(comFundMultiSig.address).send({ from: oldCfund, gas: 50000 }))
+                    .to.be.fulfilled;
+                console.log("HAD TO SET COMMUNITY ADDRESSS TO DEFAULT");
+            }
+        }
+
         beforeEach(async function () {
+            await setBackCommunityAddress();
             (await rewardContract.methods.communityFund.call()).should.be.equal(comFundMultiSig.address);
         });
 
         afterEach(async function () {
+            await setBackCommunityAddress();
             (await rewardContract.methods.communityFund.call()).should.be.equal(comFundMultiSig.address);
         });
 
         it("should set community fund address correctly", async function () {
-            await sendMultisigTransaction(
+            console.log(await sendMultisigTransaction(
                 web3,
                 comFundMultiSig,
                 {
@@ -77,8 +89,10 @@ describe("Reward contract", function () {
                 },
                 rewardContract.address,
                 0
-            ).should.be.fulfilled;
+            ).should.be.fulfilled);
+
             (await rewardContract.methods.communityFund.call()).should.be.equal(accounts[0]);
+            console.log(1)
             await expect(rewardContract.methods.setCommunityFund(comFundMultiSig.address).send({ from: accounts[0], gas: 50000 }))
                 .to.be.fulfilled;
         });
@@ -125,6 +139,35 @@ describe("Reward contract", function () {
 
     describe("#setPayoutAddress", async function () {
 
+        async function resetToDef() {
+            for(let i=0; i<accounts.length; i++) {
+                if (DEFAULT_ADDRESS != (await rewardContract.methods.payoutAddresses(accounts[i]).call())) {
+                    await expect(rewardContract.methods.resetPayoutAddress().send({ from: accounts[i], gas: 500000 }))
+                        .to.be.fulfilled;
+                }
+            }
+
+            for(let i=0; i<testValidators.length; i++) {
+                if (DEFAULT_ADDRESS != (await rewardContract.methods.payoutAddresses(testValidators[i]).call())) {
+                    await expect(rewardContract.methods.resetPayoutAddress().send({ from: testValidators[i], gas: 500000 }))
+                        .to.be.fulfilled;
+                }
+            }
+
+            if (DEFAULT_ADDRESS != (await rewardContract.methods.payoutAddresses(comFundMultiSig.address).call())) {
+                await sendMultisigTransaction(
+                    web3,
+                    comFundMultiSig,
+                    {
+                        value: 0,
+                        data: rewardContract.methods.resetPayoutAddress().encodeABI()
+                    },
+                    rewardContract.address,
+                    0
+                ).should.be.fulfilled;
+            }
+        }
+
         async function checkDefValues() {
             (await rewardContract.methods.payoutAddresses(accounts[0]).call()).should.be.equal(DEFAULT_ADDRESS);
             (await rewardContract.methods.payoutAddresses(accounts[1]).call()).should.be.equal(DEFAULT_ADDRESS);
@@ -134,10 +177,12 @@ describe("Reward contract", function () {
         }
 
         beforeEach(async function () {
+            await resetToDef();
             await checkDefValues();
         });
 
         afterEach(async function () {
+            await resetToDef();
             await checkDefValues();
         });
 
@@ -192,7 +237,6 @@ describe("Reward contract", function () {
 
         it("should always mint tokens for the community fund itself if its payout address is not specified", async function () {
             const cFund = await rewardContract.methods.communityFund().call();
-
             (await rewardContract.methods.payoutAddresses(cFund).call())
                 .should.be.equal(DEFAULT_ADDRESS);
 

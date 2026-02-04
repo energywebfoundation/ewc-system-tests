@@ -22,6 +22,6 @@
     "multisig-wallet-gnosis": "git+ssh://git@github.com/energywebfoundation/MultiSigWallet.git",
     "randomhex": "^0.1.5",
     "update": "^0.7.4",
-    "web3": "1.0.0-beta.52"
+    "web3": "1.10.4"
   }
 }
